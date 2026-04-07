@@ -21,10 +21,16 @@ Ferramenta para criar `.exe` em Python:
 Como gerar executavel:
  > pyinstaller <código principal>.py
 
+Biblioteca para geração da matriz
+> pip install numpy
+
 # 📝 Notas do projeto
 ```
 # import necessário para usar pygame
 import pygame
+
+# import necessário para usar numpy
+import numpy
 
 # Controle de clock
 clock = pygame.time.Clock()
