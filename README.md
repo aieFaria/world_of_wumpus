@@ -24,6 +24,33 @@ Como gerar executavel:
 Biblioteca para geração da matriz
 > pip install numpy
 
+## 📦 Disposição do programa
+     .
+     ├── world_of_wumpus
+     │   └── src
+     │       ├── main.py
+     │       ├── main
+     │       │    └── java
+     │       │         └── com.faria
+     │       │              ├── Main.java
+     │       │              ├── LeitorTxt.java
+     │       │              ├── EscritaTxt.java
+     │       │              ├── Token.java
+     │       │              │
+     │       │              └── enums
+     │       │                   ├── Tipagem.java
+     │       │                   └── Constantes.java
+     │       │
+     │       └── Resources
+     │           ├── imagens
+     │           │    └── wumpus.png
+     │           └── sounds
+     │                └── fedor.mp3
+     │
+     ├── README.md
+     └── world_of_wumpus.exe
+     .
+
 # 📝 Notas do projeto
 ```
 # import necessário para usar pygame
