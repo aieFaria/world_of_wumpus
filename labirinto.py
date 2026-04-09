@@ -24,7 +24,7 @@ class Labirinto:
 
                 if (linha, coluna) == player_xy:
                     cor = pygame.Color("red")
-                    railsao = pygame.image.load(os.path.join("world_of_wumpus\\resources","railsao1.png")).convert_alpha()
+                    railsao = pygame.image.load(os.path.join("world_of_wumpus\\resources","railsao.png")).convert_alpha()
                     tela.blit(railsao, rect)
     
         
