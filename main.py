@@ -47,7 +47,7 @@ class Main:
             self.labirinto.desenhar(self.tela, self.posicao_inicial)
             
             pygame.display.flip()
-            self.clock.tick(60)
+            self.clock.tick(5)
 
         pygame.quit()
 
