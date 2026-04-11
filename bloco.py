@@ -10,6 +10,10 @@ class Bloco:
         self.visible = visible
         self.teste = teste
         self.tamanho_quadrado = SQUARE_LENGTH
+    
+    # Método para visualização dos atributos do bloco
+    # def __str__(self):
+    #     return f"Linha: {self.pos_X} - Coluna: {self.pos_Y}\nVisibilidade: {self.visible} - Teste: {self.teste}"
 
     def criar(self, linha, coluna, tela):
         if (self.visible):
@@ -24,3 +28,6 @@ class Bloco:
         )
 
         return rect
+    
+    def setVisible(self, param=False): 
+        self.visible = param

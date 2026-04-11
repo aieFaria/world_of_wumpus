@@ -13,15 +13,30 @@ class Labirinto:
         self.cores = [pygame.Color(RECT_COLOR), pygame.Color("gray")]
         self.tamanho_quadrado = SQUARE_LENGTH
         # self.blocos = [[None for _ in range(8)] for _ in range(8)]
+        self.blocos = np.zeros((8, 8), dtype=object) # Tamanho do labirinto, quantidade de quadrados
+        
+        # Carregamento único das imagens, economizando CPU e processamento
+        self.imagens_player = {
+            "frente": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "" "resources", "railsao_frente.png")).convert_alpha(),
+            "costas": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "railsao_costas.png")).convert_alpha(),
+            "direita": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "railsao_direita.png")).convert_alpha(),
+            "esquerda": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "railsao_esquerda.png")).convert_alpha()
+        }
+
+        # Geração do labirinto ao iniciar, serve para acessar os blocos apenas quando for necessário
+        # gera apenas uma vez
+        self.gerar_labirinto()
 
     # Adicionando novo parametro "direcao" para indicar para qual lado personagem está olhando
     def desenhar(self, tela, player_xy, direcao):
         # self.blocos = [[None for _ in range(8)] for _ in range(8)]
-        self.blocos = np.zeros((8, 8), dtype=object)
-        for linha in range(8):
-            for coluna in range(8):
-                self.bloco = Bloco(linha, coluna, True, (linha, coluna))
-                self.blocos[linha][coluna] = self.bloco
+        # self.blocos = np.zeros((8, 8), dtype=object)
+
+        # Alteração: Considerando tamanho da matriz para os laços de repetição
+        for linha in range(self.blocos.__len__()):
+            for coluna in range(self.blocos[0].__len__()):
+                #self.bloco = Bloco(linha, coluna, True, (linha, coluna))
+                self.bloco = self.blocos[linha][coluna]
                 # if (player_xy == (0, 0)):
                 # if (linha >= 0 and linha <= 7) and (coluna >= 0 and coluna <= 7):
                 #     self.bloco = Bloco(0, 1, True, (0, 1))
@@ -33,8 +48,8 @@ class Labirinto:
                     # 40 blocos.
                     # self.blocos.append(self.bloco)
                 
-                #print(self.blocos.__len__())
-                #print(self.blocos[linha][coluna])
+                print(self.blocos.__len__()) ; print("linha ", linha, " | coluna ", coluna)
+                print(self.blocos[linha][coluna],"\n")
 
                 # rect = pygame.draw.rect(
                 #     tela, 
@@ -47,22 +62,21 @@ class Labirinto:
                 # Alterado para comparar Listas
                 # variavel player_xy agora é uma lista
                 if [linha, coluna] == player_xy:
-                    self.bloco = Bloco(linha, coluna, True, (linha, coluna))
+                    #self.bloco = Bloco(linha, coluna, True, (linha, coluna)) -> Não é mais necessário
+                    self.bloco.setVisible(True)
 
-                    # Adicionando operador ternario para verificação do SO
-                    # condicionais para definição da imagem de saída, escolhida com base
-                    # na direção do personagem
-                    if (direcao == "frente"):
-                        railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_frente.png")).convert_alpha()
-                    elif (direcao == "costas"):
-                        railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_costas.png")).convert_alpha()
-                    elif (direcao == "direita"):
-                        railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_direita.png")).convert_alpha()
-                    elif (direcao == "esquerda"):
-                        railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_esquerda.png")).convert_alpha()
+                    # Redução do uso da memória, chama a imagem ja gerada que foi salva na memória
+                    # ao invés de criar uma sempre
+                    railsao = self.imagens_player[direcao]
                 
-                    tela.blit(railsao, rect)
-
+                    # Criando forma de centralização da imagem no bloco
+                    tela.blit(railsao, railsao.get_rect(
+                                       center=self.bloco.criar(linha, coluna, tela).center))
+    
+    def gerar_labirinto(self):
+        for linha in range(8):
+            for coluna in range(8):
+                self.blocos[linha][coluna] = Bloco(linha, coluna, False, (linha, coluna))
                 
     
         
