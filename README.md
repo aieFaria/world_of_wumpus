@@ -8,9 +8,11 @@ Ativar ambiente virtual python
 > python -m venv .venv
 
 Entrar no ambiente vistual
-> .\\.venv\Scripts\activate
+> .\\.venv\Scripts\activate (Windowns)
 
- ## 🔗 Dependencias do projeto
+> source venv/bin/activate (Linux)
+
+## 🔗 Dependencias do projeto
 
 Biblioteca pygame-ce para desenvolvimanto de jogos 2D
 > pip install pygame-ce
@@ -20,6 +22,10 @@ Ferramenta para criar `.exe` em Python:
 
 Como gerar executavel:
  > pyinstaller <código principal>.py
+
+(Linux) Permitir a execução do arquivo gerado
+> chmod +x dist/<nome do script>
+
 
 Biblioteca para geração da matriz
 > pip install numpy
