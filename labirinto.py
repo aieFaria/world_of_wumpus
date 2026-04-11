@@ -1,4 +1,5 @@
 import os
+import platform
 
 import numpy as np
 import pygame
@@ -13,7 +14,8 @@ class Labirinto:
         self.tamanho_quadrado = SQUARE_LENGTH
         # self.blocos = [[None for _ in range(8)] for _ in range(8)]
 
-    def desenhar(self, tela, player_xy):
+    # Adicionando novo parametro "direcao" para indicar para qual lado personagem está olhando
+    def desenhar(self, tela, player_xy, direcao):
         # self.blocos = [[None for _ in range(8)] for _ in range(8)]
         self.blocos = np.zeros((8, 8), dtype=object)
         for linha in range(8):
@@ -31,8 +33,8 @@ class Labirinto:
                     # 40 blocos.
                     # self.blocos.append(self.bloco)
                 
-                print(self.blocos.__len__())
-                print(self.blocos[linha][coluna])
+                #print(self.blocos.__len__())
+                #print(self.blocos[linha][coluna])
 
                 # rect = pygame.draw.rect(
                 #     tela, 
@@ -42,9 +44,21 @@ class Labirinto:
 
                 rect = self.bloco.criar(linha, coluna, tela)
 
-                if (linha, coluna) == player_xy:
+                # Alterado para comparar Listas
+                # variavel player_xy agora é uma lista
+                if [linha, coluna] == player_xy:
                     self.bloco = Bloco(linha, coluna, True, (linha, coluna))
-                    railsao = pygame.image.load(os.path.join("world_of_wumpus\\resources","railsao.png")).convert_alpha()
+
+                    # Adicionando operador ternario para verificação do SO
+                    if (direcao == "frente"):
+                        railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_frente.png")).convert_alpha()
+                    elif (direcao == "costas"):
+                        railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_costas.png")).convert_alpha()
+                    elif (direcao == "direita"):
+                        railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_direita.png")).convert_alpha()
+                    elif (direcao == "esquerda"):
+                        railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_esquerda.png")).convert_alpha()
+                
                     tela.blit(railsao, rect)
 
                 
