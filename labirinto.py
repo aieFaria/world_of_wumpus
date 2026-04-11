@@ -50,6 +50,8 @@ class Labirinto:
                     self.bloco = Bloco(linha, coluna, True, (linha, coluna))
 
                     # Adicionando operador ternario para verificação do SO
+                    # condicionais para definição da imagem de saída, escolhida com base
+                    # na direção do personagem
                     if (direcao == "frente"):
                         railsao = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources","railsao_frente.png")).convert_alpha()
                     elif (direcao == "costas"):
