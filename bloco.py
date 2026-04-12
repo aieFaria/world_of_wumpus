@@ -1,33 +1,86 @@
 import pygame
+import os
+import platform
 
-from cons import RECT_COLOR, SQUARE_LENGTH
+from cons import SQUARE_LENGTH
 
 class Bloco:
 
-    def __init__(self, pos_X, pos_Y, visible, teste):
+    # Atributos de um bloco (sala):
+    # - posição X e Y (linha e coluna)
+    # - visibilidade (se o jogador já passou por ali ou não)
+    # - Buraco (pit)
+    # - Wumpus (wumpus)
+    # - Morcegos (bats)
+    # - Flecha (arrow)
+    # - Ouro (gold)
+    # - Atributos (blocos adjacentes a um buraco ou wumpus tem atributos de "Breeze" e "Stench", respectivamente)
+                                   
+    def __init__(self, pos_X, pos_Y, visible, pit, wumpus, bats=False, arrow=False, gold=False):
         self.pos_X = pos_X
         self.pos_Y = pos_Y
         self.visible = visible
-        self.teste = teste
+        self.hasPit = pit
+        self.hasWumpus = wumpus
+        self.hasBats = bats
+        self.hasArrow = arrow
+        self.hasGold = gold
+
+        self.attributes = []
         self.tamanho_quadrado = SQUARE_LENGTH
+        self.font = pygame.font.SysFont('Arial', 20)
     
     # Método para visualização dos atributos do bloco
     # def __str__(self):
-    #     return f"Linha: {self.pos_X} - Coluna: {self.pos_Y}\nVisibilidade: {self.visible} - Teste: {self.teste}"
+    #     return f"Linha: {self.pos_X} - Coluna: {self.pos_Y}\nVisibilidade: {self.visible}"
 
     def criar(self, linha, coluna, tela):
-        if (self.visible):
-            cor = [pygame.Color(RECT_COLOR), pygame.Color("gray")][(linha + coluna) % 2]
-        else:
-            cor = pygame.Color("black")
-
+        cor = pygame.Color("gray")
+        
         rect = pygame.draw.rect(
-            tela, 
+            tela,
             cor,
             (coluna * (self.tamanho_quadrado), linha * (self.tamanho_quadrado), self.tamanho_quadrado, self.tamanho_quadrado)
         )
+
+        lista_atributos = []
+        # Gambiarra temporária, para carregar imagem de fundo
+        # Buracos, e adicionar propriedades.
+        if (self.visible):
+            bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "background.png")).convert_alpha()
+            if (self.hasPit):
+                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "buraco.png")).convert_alpha()
+                # Só aparece o texto se ele for utilizzado depois de tela.blit(bg, ...)
+            elif (self.hasWumpus):
+                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "wumpus.png")).convert_alpha()
+            elif (self.hasBats):
+                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "morcego.png")).convert_alpha()
+            elif (self.hasArrow):
+                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "flecha.png")).convert_alpha()
+            if (self.hasGold):
+                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "ouro.png")).convert_alpha()
+            
+        else:
+            bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "nevoa.png")).convert_alpha()
+        
+        tela.blit(bg, bg.get_rect(center=rect.center))
+        
+        if self.attributes and self.visible:
+            text_surf = self.font.render(f"{''.join(self.attributes)}", True, pygame.Color("white"))
+            text_rect = text_surf.get_rect(center=rect.center)
+            tela.blit(text_surf, text_rect)
 
         return rect
     
     def setVisible(self, param=False): 
         self.visible = param
+
+    def setPit(self, param=False):
+        self.hasPit = param
+
+    def setWumpus(self, param=False):
+        self.hasWumpus = param
+    
+    def removeAttributes(self):
+        for attribute in self.attributes:
+            self.attributes.remove(attribute)
