@@ -108,7 +108,7 @@ class Labirinto:
                 backup_list.append([num_x, num_y])
             else:
                 backup_list.append([num_x, num_y])
-                print(f"backup_list: {backup_list}")
+                #print(f"backup_list: {backup_list}")
 
             if (i == ind_arrow-1):
                 self.blocos[num_x][num_y].reconfigurar(False, False, False, False, True, False)
@@ -128,8 +128,8 @@ class Labirinto:
                 self.conf_blocos_adjacentes(num_x, num_y, "Flapping")
             
 
-            print(f"{i} - número x: {num_x}")
-            print(f"{i} - número y: {num_y}")
+            #print(f"{i} - número x: {num_x}")
+            #print(f"{i} - número y: {num_y}")
 
     # Verificar se os números aleatórios gerados são iguais, caso sejam, 
     # gerar novos números. Utiliza recursão, mas acredito que será bem raro de acontecer.

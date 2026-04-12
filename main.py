@@ -11,7 +11,7 @@ class Main:
         self.clock = pygame.time.Clock()
         self.labirinto = Labirinto()
         self.agente = Agente(1, self.labirinto)
-        self.ativa_agente = False
+        self.ativa_agente = True
 
     def executar(self, player_x, player_y):
         # Alteração: uso da posição como sendo tupla substituído para lista
@@ -30,9 +30,9 @@ class Main:
             # Executa o agente caso ele esteja ativo
             # self.ativa_agente define isso
             if self.ativa_agente:
-                    self.agente.executar(self)
+                self.agente.executar(self)
+                if(self.agente.finalizado): self.ativa_agente = False
             else:
-
                 for evento in pygame.event.get():
                     if evento.type == pygame.QUIT:
                         rodando = False

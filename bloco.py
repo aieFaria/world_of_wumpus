@@ -29,6 +29,16 @@ class Bloco:
         self.attributes = []
         self.tamanho_quadrado = SQUARE_LENGTH
         self.font = pygame.font.SysFont('Arial', 18)
+
+        self.caracteristica = {
+            "background": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "background.png")).convert_alpha(),
+            "buraco": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "buraco.png")).convert_alpha(),
+            "wummpus": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "wumpus.png")).convert_alpha(),
+            "morcego": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "morcego.png")).convert_alpha(),
+            "flecha": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "flecha.png")).convert_alpha(),
+            "ouro": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "ouro.png")).convert_alpha(),
+            "nevoa": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "nevoa.png")).convert_alpha()
+        }
     
     # Método para visualização dos atributos do bloco
     # def __str__(self):
@@ -44,24 +54,17 @@ class Bloco:
         )
 
         lista_atributos = []
-        # Gambiarra temporária, para carregar imagem de fundo
-        # Buracos, e adicionar propriedades.
+        # Alteração para economizar processamento
         if (self.visible):
-            bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "background.png")).convert_alpha()
-            if (self.hasPit):
-                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "buraco.png")).convert_alpha()
-                # Só aparece o texto se ele for utilizzado depois de tela.blit(bg, ...)
-            elif (self.hasWumpus):
-                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "wumpus.png")).convert_alpha()
-            elif (self.hasBats):
-                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "morcego.png")).convert_alpha()
-            elif (self.hasArrow):
-                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "flecha.png")).convert_alpha()
-            if (self.hasGold):
-                bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "ouro.png")).convert_alpha()
+            bg = self.caracteristica["background"]
+            if( self.hasPit ): bg = self.caracteristica["buraco"]
+            elif( self.hasWumpus ): bg = self.caracteristica["wummpus"]
+            elif( self.hasBats ): bg = self.caracteristica["morcego"]
+            elif( self.hasArrow ): bg = self.caracteristica["flecha"]
+            elif( self.hasGold ): bg = self.caracteristica["ouro"]
             
         else:
-            bg = pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "nevoa.png")).convert_alpha()
+            bg = self.caracteristica["nevoa"]
         
         tela.blit(bg, bg.get_rect(center=rect.center))
         
