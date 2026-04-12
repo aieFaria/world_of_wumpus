@@ -1,6 +1,7 @@
 # Example file showing a basic pygame "game loop"
 import pygame
 from labirinto import Labirinto
+from agente import Agente
 
 class Main:
     def __init__(self):
@@ -9,6 +10,8 @@ class Main:
         pygame.display.set_caption("World of Wumpus")
         self.clock = pygame.time.Clock()
         self.labirinto = Labirinto()
+        self.agente = Agente(1, self.labirinto)
+        self.ativa_agente = False
 
     def executar(self, player_x, player_y):
         # Alteração: uso da posição como sendo tupla substituído para lista
@@ -23,50 +26,57 @@ class Main:
         #             na diagonal e respeitar a situação de um clique por vez;
         rodando = True
         while rodando:
-            for evento in pygame.event.get():
-                if evento.type == pygame.QUIT:
-                    rodando = False
-                if evento.type == pygame.KEYDOWN:
 
-                    # Condicional modificada para inalterar posição quando personagem não estiver olhando 
-                    # para direção correta
-                    if evento.key == pygame.K_RIGHT:
-                        # player_y substitui posicao_inicial[1]
-                        print(self.player_y)
-                        if self.direcao == "direita":
-                            if self.player_y < 7:
-                                self.player_y += 1
-                        else:
-                            self.direcao = "direita"
-                        break
+            # Executa o agente caso ele esteja ativo
+            # self.ativa_agente define isso
+            if self.ativa_agente:
+                    self.agente.executar(self)
+            else:
 
-                    elif evento.key == pygame.K_LEFT:
-                        print(self.player_y)
-                        if self.direcao == "esquerda":
-                            if self.player_y > 0:
-                                self.player_y -= 1
-                        else:
-                            self.direcao = "esquerda"
-                        break
+                for evento in pygame.event.get():
+                    if evento.type == pygame.QUIT:
+                        rodando = False
+                    if evento.type == pygame.KEYDOWN:
 
-                    elif evento.key == pygame.K_DOWN:
-                        # player_x substitui posicao_inicial[0]
-                        print(self.player_x)
-                        if self.direcao == "frente":
-                            if self.player_x < 7:
-                                self.player_x += 1
-                        else:
-                            self.direcao = "frente"
-                        break
+                        # Condicional modificada para inalterar posição quando personagem não estiver olhando 
+                        # para direção correta
+                        if evento.key == pygame.K_RIGHT:
+                            # player_y substitui posicao_inicial[1]
+                            print(self.player_y)
+                            if self.direcao == "direita":
+                                if self.player_y < 7:
+                                    self.player_y += 1
+                            else:
+                                self.direcao = "direita"
+                            break
 
-                    elif evento.key == pygame.K_UP:
-                        print(self.player_x)
-                        if self.direcao == "costas":
-                            if self.player_x > 0:
-                                self.player_x -= 1
-                        else:
-                            self.direcao = "costas"
-                        break
+                        elif evento.key == pygame.K_LEFT:
+                            print(self.player_y)
+                            if self.direcao == "esquerda":
+                                if self.player_y > 0:
+                                    self.player_y -= 1
+                            else:
+                                self.direcao = "esquerda"
+                            break
+
+                        elif evento.key == pygame.K_DOWN:
+                            # player_x substitui posicao_inicial[0]
+                            print(self.player_x)
+                            if self.direcao == "frente":
+                                if self.player_x < 7:
+                                    self.player_x += 1
+                            else:
+                                self.direcao = "frente"
+                            break
+
+                        elif evento.key == pygame.K_UP:
+                            print(self.player_x)
+                            if self.direcao == "costas":
+                                if self.player_x > 0:
+                                    self.player_x -= 1
+                            else:
+                                self.direcao = "costas"
+                            break
 
             self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao)
             

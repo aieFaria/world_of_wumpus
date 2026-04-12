@@ -15,6 +15,7 @@ class Labirinto:
         self.cores = [pygame.Color(RECT_COLOR), pygame.Color("gray")]
         self.tamanho_quadrado = SQUARE_LENGTH
         self.blocos = np.zeros((8, 8), dtype=object) # Tamanho do labirinto, quantidade de quadrados
+        self.visitadosLabirinto = set()
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
@@ -22,6 +23,11 @@ class Labirinto:
             "costas": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "player", "railsao_costas.png")).convert_alpha(),
             "direita": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "player", "railsao_direita.png")).convert_alpha(),
             "esquerda": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "player", "railsao_esquerda.png")).convert_alpha()
+        }
+
+        self.sons_lab = {
+            "bafo": pygame.mixer.Sound(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "bafoDeBosta.mp3"))
+            #"brisa": pygame.mixer.Sound("pulo.wav")
         }
 
         # Geração do labirinto ao iniciar, serve para acessar os blocos apenas quando for necessário
@@ -46,6 +52,7 @@ class Labirinto:
                 # variavel player_xy agora é uma lista :: A comparação continua sendo entre uma lista, podemos modifiar.
                 if [linha, coluna] == [player_x, player_y]:
                     self.bloco.setVisible(True)
+                    
 
                     # Redução do uso da memória, chama a imagem ja gerada que foi salva na memória
                     # ao invés de criar uma sempre
@@ -53,6 +60,15 @@ class Labirinto:
                     
                     tela.blit(railsao, railsao.get_rect(
                                        center=rect.center))
+                    
+                    # Incrementar efeito sonoro aqui ou na movimentação
+                    # Exemplo:
+                    
+                    if( 'Stench\n' in self.bloco.attributes and not (player_x, player_y) in self.visitadosLabirinto):
+                        self.visitadosLabirinto.add((player_x, player_y))
+                        som_pulo = self.sons_lab["bafo"]
+                        som_pulo.play()
+
                     
     # Modificar a função "def gerar_labirinto(self, tamanho_labirinto)". "tamanho_labirinto" será um par ordernado (linha, coluna)
     # Tamanho padrão, aumentando a cada vitória ou definido pelo usuário.
@@ -62,7 +78,10 @@ class Labirinto:
                 # ParÂmetros de Bloco: 
                 # 1 -> posicao_X  | 2 -> posicao_Y  | 3 -> visivel?
                 # 4 -> tem buraco?  | 5 -> tem wumpus?  | 6 -> tem morcegos?  | 7 -> tem flecha?  | 8 -> tem ouro?
-                self.blocos[linha][coluna] = Bloco(linha, coluna, False, False, False, False, False, False)
+                if ( [linha, coluna] == [0, 1] ) or ( [linha, coluna] == [1, 0] ) or ( [linha, coluna] == [0, 0] ):
+                    self.blocos[linha][coluna] = Bloco(linha, coluna, True, False, False, False, False, False)
+                else:
+                    self.blocos[linha][coluna] = Bloco(linha, coluna, False, False, False, False, False, False)
 
         #  Tornar qtd de morcegos maior que 1, a depender do tamanho do labirinto.
         qtd_buracos = (self.blocos.__len__() * self.blocos.__len__()) // 10
@@ -91,19 +110,23 @@ class Labirinto:
                 backup_list.append([num_x, num_y])
                 print(f"backup_list: {backup_list}")
 
+            if (i == ind_arrow-1):
+                self.blocos[num_x][num_y].reconfigurar(False, False, False, False, True, False)
+            if (i == ind_gold-1):
+                self.blocos[num_x][num_y].reconfigurar(False, False, False, False, False, True)
             if (i < qtd_buracos):
-                self.blocos[num_x][num_y] = Bloco(num_x, num_y, False, True, False, False, False, False)
+                self.blocos[num_x][num_y].reconfigurar(False, True, False, False, False, False)
+                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wummpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Breeze\n")
             if (i == qtd_wumpus-1):
-                self.blocos[num_x][num_y] = Bloco(num_x, num_y, True, False, True, False, False, False)
+                self.blocos[num_x][num_y].reconfigurar(False, False, True, False, False, False)
+                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wummpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Stench\n")
             if (i == qtd_morcegos-1):
-                self.blocos[num_x][num_y] = Bloco(num_x, num_y, True, False, False, True, False, False)
+                self.blocos[num_x][num_y].reconfigurar(False, False, False, True, False, False)
+                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wummpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Flapping")
-            if (i == ind_arrow-1):
-                self.blocos[num_x][num_y] = Bloco(num_x, num_y, True, False, False, False, True, False)
-            if (i == ind_gold-1):
-                self.blocos[num_x][num_y] = Bloco(num_x, num_y, True, False, False, False, False, True)
+            
 
             print(f"{i} - número x: {num_x}")
             print(f"{i} - número y: {num_y}")
@@ -121,6 +144,7 @@ class Labirinto:
     # Método para configurar os blocos adjacentes a um bloco com buraco ou wumpus, 
     # adicionando os atributos "Breeze" e "Stench", respectivamente
     def conf_blocos_adjacentes(self, linha, coluna, attribute):
+
         if linha > 0:
             self.bloco = self.blocos[linha - 1][coluna] # Baixo
             if not (self.verificar_bloco(self.bloco, attribute)):

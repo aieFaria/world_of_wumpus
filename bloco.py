@@ -72,6 +72,9 @@ class Bloco:
 
         return rect
     
+    def isVisible(self):
+        return self.visible
+
     def setVisible(self, param=False): 
         self.visible = param
 
@@ -84,3 +87,31 @@ class Bloco:
     def removeAttributes(self):
         for attribute in self.attributes:
             self.attributes.remove(attribute)
+
+    def hasStench(self):
+        # Se o bloco é visivel retorna se te
+        if(self.visible):
+            return "Stench\n" in self.attributes
+        else:
+            return False
+        
+    def hasBreeze(self):
+        if(self.visible):
+            return "Breeze\n" in self.attributes
+        else:
+            return False
+    
+    def hasFlappings(self):
+        if(self.visible):
+            return "Flapping" in self.attributes
+        else:
+            return False
+        
+    # Reconfigurando bloco, todos parametros False por padrão
+    def reconfigurar(self, visible=False, pit=False, wummpus=False, bats=False, arrow=False, gold=False):
+        self.visible = visible
+        self.hasPit = pit
+        self.hasWumpus = wummpus
+        self.hasBats = bats
+        self.hasArrow = arrow
+        self.hasGold = gold
