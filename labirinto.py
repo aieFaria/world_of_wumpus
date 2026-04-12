@@ -122,11 +122,11 @@ class Labirinto:
     # adicionando os atributos "Breeze" e "Stench", respectivamente
     def conf_blocos_adjacentes(self, linha, coluna, attribute):
         if linha > 0:
-            self.bloco = self.blocos[linha - 1][coluna] # Cima
+            self.bloco = self.blocos[linha - 1][coluna] # Baixo
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
         if linha < 7:
-            self.bloco = self.blocos[linha + 1][coluna] # Baixo
+            self.bloco = self.blocos[linha + 1][coluna] # Cima
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
         if coluna > 0:

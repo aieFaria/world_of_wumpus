@@ -28,7 +28,7 @@ class Bloco:
 
         self.attributes = []
         self.tamanho_quadrado = SQUARE_LENGTH
-        self.font = pygame.font.SysFont('Arial', 20)
+        self.font = pygame.font.SysFont('Arial', 18)
     
     # Método para visualização dos atributos do bloco
     # def __str__(self):
