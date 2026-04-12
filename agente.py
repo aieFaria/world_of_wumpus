@@ -11,6 +11,7 @@ class Agente:
         self.id = id
         self.labirinto = labirinto
         self.ponteiro = 0
+        self.finalizado = False
         self.visitados = set()
         self.pilha_caminho = []
         self.historico = [] # Inicializa vazio
@@ -30,7 +31,7 @@ class Agente:
         bloco = self.labirinto.blocos[x][y]
         tamanhoLabirinto = 64
 
-        print("tam: ",len(self.visitados))
+        #print("tam: ",len(self.visitados))
         # if( posicaoXY == [0, 0] and len(self.visitados) >= tamanhoLabirinto ):
         #     # Executar comando para sair do labirinto
         #     print("Labirinto concluído")
@@ -43,13 +44,6 @@ class Agente:
             #print(self.caminhoCurto(posicaoXY, [0,0]))
             # Substituir pela geração de um caminho que desvie dos perigos
             #return self.caminhoCurto(posicaoXY, [0,0])
-        
-
-        # Se está na posição inicial (0, 0) e ainda não visitou todos os blocos vá para frente
-        # if( posicaoXY == [0, 0] and len(self.visitados) < tamanhoLabirinto ):
-        #     if bloco.hasBreeze() or bloco.hasStench() or bloco.hasFlappings():
-        #         return []
-        #     return ["frente", "frente"]
 
         # Condicional para verifcação de perigos
         if ( bloco.hasBreeze() or bloco.hasStench() or bloco.hasFlappings() ):
@@ -86,7 +80,7 @@ class Agente:
         if self.pilha_caminho:
             destino_volta = self.pilha_caminho.pop()
             return self.caminhoCurto(posicaoXY, destino_volta, direcao_atual)
-        
+        self.finalizado = True
         return []
 
     """
@@ -131,7 +125,6 @@ class Agente:
 
     """
     Método auxiliar para executar o movimento do personagem
-     - Verificar se cabe nas alterações do Isaac
     """
     def mover(self, main, direcao):
         if main.direcao == direcao:
