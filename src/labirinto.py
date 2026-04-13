@@ -1,11 +1,8 @@
-import os
-import random
-import platform
-
+import os, random, platform
 import numpy as np
 import pygame
 
-from cons import RECT_COLOR, SQUARE_LENGTH
+from cons import RECT_COLOR, QUADRADO_TAMANHO
 from bloco import Bloco
 
 class Labirinto:
@@ -13,7 +10,7 @@ class Labirinto:
     def __init__(self):
         self.board = np.zeros((8, 8))
         self.cores = [pygame.Color(RECT_COLOR), pygame.Color("gray")]
-        self.tamanho_quadrado = SQUARE_LENGTH
+        self.tamanho_quadrado = QUADRADO_TAMANHO
         self.blocos = np.zeros((8, 8), dtype=object) # Tamanho do labirinto, quantidade de quadrados
         self.visitadosLabirinto = set()
         self.pontuacao = 0
@@ -74,8 +71,7 @@ class Labirinto:
                     #railsao = self.imagens_player[direcao]
                     railsao = self.imagens_player[direcao]
                     
-                    tela_virtual.blit(railsao, railsao.get_rect(
-                                       center=rect.center))
+                    tela_virtual.blit(railsao, railsao.get_rect(center=rect.center))
                     
                     # Condicionais para definição da pontuação
                     if( bloco.hasWumpus and not (player_x, player_y) in self.visitadosLabirinto ):

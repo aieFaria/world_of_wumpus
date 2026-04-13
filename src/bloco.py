@@ -2,7 +2,7 @@ import pygame
 import os
 import platform
 
-from cons import SQUARE_LENGTH
+from cons import QUADRADO_TAMANHO
 
 class Bloco:
 
@@ -27,18 +27,20 @@ class Bloco:
         self.hasGold = gold
 
         self.attributes = []
-        self.tamanho_quadrado = SQUARE_LENGTH
+        self.tamanho_quadrado = QUADRADO_TAMANHO
         self.font = pygame.font.SysFont('Arial', 18)
 
+        directory_path = "world_of_wumpus" if platform.system() == "Windows" else ""
+
         self.caracteristica = {
-            "background": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "background.png")).convert_alpha(),
-            "buraco": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "buraco.png")).convert_alpha(),
-            "wummpus": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "wumpus.png")).convert_alpha(),
-            "morcego": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "morcego.png")).convert_alpha(),
-            "flecha": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "flecha.png")).convert_alpha(),
-            "ouro": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "ouro.png")).convert_alpha(),
-            "nevoa": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "nevoa.png")).convert_alpha(),
-            "arco": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "arco.png")).convert_alpha()
+            "background": pygame.image.load(os.path.join(directory_path, "resources", "background.png")).convert_alpha(),
+            "buraco": pygame.image.load(os.path.join(directory_path, "resources", "buraco.png")).convert_alpha(),
+            "wummpus": pygame.image.load(os.path.join(directory_path, "resources", "wumpus.png")).convert_alpha(),
+            "morcego": pygame.image.load(os.path.join(directory_path, "resources", "morcego.png")).convert_alpha(),
+            "flecha": pygame.image.load(os.path.join(directory_path, "resources", "flecha.png")).convert_alpha(),
+            "ouro": pygame.image.load(os.path.join(directory_path, "resources", "ouro.png")).convert_alpha(),
+            "nevoa": pygame.image.load(os.path.join(directory_path, "resources", "nevoa.png")).convert_alpha(),
+            "arco": pygame.image.load(os.path.join(directory_path, "resources", "arco.png")).convert_alpha()
         }
     
     # Método para visualização dos atributos do bloco
@@ -54,7 +56,6 @@ class Bloco:
             (coluna * (self.tamanho_quadrado), linha * (self.tamanho_quadrado), self.tamanho_quadrado, self.tamanho_quadrado)
         )
 
-        lista_atributos = []
         # Alteração para economizar processamento
         if (self.visible):
             bg = self.caracteristica["background"]
@@ -112,10 +113,10 @@ class Bloco:
             return False
         
     # Reconfigurando bloco, todos parametros False por padrão
-    def reconfigurar(self, visible=False, pit=False, wummpus=False, bats=False, arrow=False, gold=False):
+    def reconfigurar(self, visible=False, pit=False, wumpus=False, bats=False, arrow=False, gold=False):
         self.visible = visible
         self.hasPit = pit
-        self.hasWumpus = wummpus
+        self.hasWumpus = wumpus
         self.hasBats = bats
         self.hasArrow = arrow
         self.hasGold = gold

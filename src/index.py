@@ -1,5 +1,5 @@
 import pygame, os
-from cons import WINDOW_LENGTH
+from cons import LARGURA_TELA, ALTURA_TELA
 from button import Button
 from main import Main
 
@@ -7,7 +7,7 @@ class Index:
     def __init__(self):
         pygame.init()
 
-        self.screen = pygame.display.set_mode((WINDOW_LENGTH, WINDOW_LENGTH))
+        self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
         self.COLOR = (50, 50, 50)
         self.main = Main()
 
@@ -21,17 +21,17 @@ class Index:
             print("MENU_MOUSE_POS:", MENU_MOUSE_POS)
 
             MENU_TEXT = self.get_font(40).render("WORLD OF WUMPUS", True, "White")
-            MENU_RECT = MENU_TEXT.get_rect(center=(WINDOW_LENGTH // 2, 100))
+            MENU_RECT = MENU_TEXT.get_rect(center=(LARGURA_TELA // 2, 100))
             
             self.screen.fill(self.COLOR)
 
             img = pygame.image.load(os.path.join("world_of_wumpus", "resources", "button_background.png")).convert_alpha()
             on_off_img = pygame.image.load(os.path.join("world_of_wumpus", "resources", "on_off_background.png")).convert_alpha()
 
-            ON_BUTTON = Button(image=on_off_img, pos=(WINDOW_LENGTH // 2 + 170, 200), text_input="ON", font=self.get_font(15), base_color="#d7fcd4", hovering_color="#f09184")
-            OFF_BUTTON = Button(image=on_off_img, pos=(WINDOW_LENGTH // 2 + 170, 200), text_input="OFF", font=self.get_font(15), base_color="#d7fcd4", hovering_color="#f09184")
-            PLAY_BUTTON = Button(image=img, pos=(WINDOW_LENGTH // 2, 200), text_input="PLAY", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
-            QUIT_BUTTON = Button(image=img, pos=(WINDOW_LENGTH // 2, 400), text_input="QUIT", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            ON_BUTTON = Button(image=on_off_img, pos=(LARGURA_TELA // 2 + 170, 200), text_input="ON", font=self.get_font(15), base_color="#d7fcd4", hovering_color="#f09184")
+            OFF_BUTTON = Button(image=on_off_img, pos=(LARGURA_TELA // 2 + 170, 200), text_input="OFF", font=self.get_font(15), base_color="#d7fcd4", hovering_color="#f09184")
+            PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 200), text_input="PLAY", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 400), text_input="QUIT", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
 
             self.screen.blit(MENU_TEXT, MENU_RECT)
 

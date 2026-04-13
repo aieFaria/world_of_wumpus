@@ -1,5 +1,6 @@
 # Example file showing a basic pygame "game loop"
 import pygame
+from cons import LARGURA_TELA, ALTURA_TELA, ALTURA_BARRA
 from labirinto import Labirinto
 from agente import Agente
 
@@ -7,25 +8,25 @@ class Main:
     def __init__(self):
         pygame.init()
         # Janela de tamanho fixo
-        self.LARGURA_TELA = 700
-        self.ALTURA_TELA = 700
-        self.ALTURA_BARRA = 60
+        # self.LARGURA_TELA = 700
+        # self.ALTURA_TELA = 700
+        # self.ALTURA_BARRA = 60
 
-        self.tela = pygame.display.set_mode((self.LARGURA_TELA, self.ALTURA_TELA))
+        self.tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
         pygame.display.set_caption("World of Wumpus")
         self.clock = pygame.time.Clock()
         self.labirinto = Labirinto()
         self.agente = Agente(1, self.labirinto)
-        self.ativa_agente = True
+        # self.ativa_agente = True
         self.fonte = pygame.font.SysFont("Arial", 20, bold=True)
 
     def desenhar_barra(self):
         # Fundo da barra completamente branco
-        pygame.draw.rect(self.tela, (255, 255, 255), (0, 0, self.LARGURA_TELA, self.ALTURA_BARRA))
+        pygame.draw.rect(self.tela, (255, 255, 255), (0, 0, LARGURA_TELA, ALTURA_BARRA))
         
         tamanho_slot = 40
         espaco_slot = 10
-        y_slot = (self.ALTURA_BARRA - tamanho_slot) // 2
+        y_slot = (ALTURA_BARRA - tamanho_slot) // 2
         
         # Desenhando 3 slots como exemplo (para flecha, ouro, etc.)
         for i in range(1):
@@ -45,17 +46,18 @@ class Main:
         text_rect = texto_pontos.get_rect()
         
         # Centraliza verticalmente e alinha à direita com uma margem de 20px
-        text_rect.centery = self.ALTURA_BARRA // 2
-        text_rect.right = self.LARGURA_TELA - 20
+        text_rect.centery = ALTURA_BARRA // 2
+        text_rect.right = LARGURA_TELA - 20
         
         self.tela.blit(texto_pontos, text_rect)
 
-    def executar(self, player_x, player_y):
+    def executar(self, player_x, player_y, ativar_agente=True):
         # Alteração: uso da posição como sendo tupla substituído para lista
         # isso otimiza o código e dispensa necessidade de repetição de uma dimensão
         # que não foi alterada na movimentação
         self.player_x = player_x
         self.player_y = player_y
+        self.ativa_agente = ativar_agente
         self.direcao = "frente"
         
         tamanho_original_lab = 64 #self.tamanho_mapa * self.labirinto.tamanho_quadrado
@@ -116,7 +118,7 @@ class Main:
                 # if self.agente.finalizado:
                 #     print()
                         
-            self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, self.ALTURA_BARRA, self.LARGURA_TELA, self.ALTURA_TELA)
+            self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
             
             self.desenhar_barra()
             
@@ -125,5 +127,5 @@ class Main:
 
         pygame.quit()
 
-index = Main()
-index.executar(0, 0)
+# index = Main()
+# index.executar(0, 0)
