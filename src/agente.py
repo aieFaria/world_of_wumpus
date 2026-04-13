@@ -10,6 +10,7 @@ class Agente:
         # Atributo de instância do agente
         self.id = id
         self.labirinto = labirinto
+        self.tamanho = labirinto.blocos.__len__() # Atributo para controle automático do tamanho do tabuleiro
         self.ponteiro = 0
         self.finalizado = False
         self.visitados = set()
@@ -62,7 +63,7 @@ class Agente:
         ]
 
         for vx, vy, direcao in direcoes:
-            if 0 <= vx < 8 and 0 <= vy < 8:
+            if 0 <= vx < self.tamanho and 0 <= vy < self.tamanho:
                 # Se o bloco é não visivel e não foi visitado
                 if( not self.foi_visitado(vx, vy) ):
                     self.pilha_caminho.append((x, y))
@@ -107,6 +108,8 @@ class Agente:
 
     def executar(self, main):
 
+        if(self.finalizado): return
+
         # Variável que indica que o jogo foi finalizado
         terminar = False
         if not self.historico:
@@ -114,6 +117,7 @@ class Agente:
             #print(self.historico)
 
             if not self.historico:
+                self.finalizado = True
                 return
   
         if len(self.historico) > 0:
@@ -130,7 +134,7 @@ class Agente:
         if main.direcao == direcao:
             match direcao:
                 case "direita":
-                    if main.player_y < 7:
+                    if main.player_y < self.tamanho-1:
                         main.player_y += 1
                 case "esquerda":
                     if main.player_y > 0:
@@ -139,7 +143,7 @@ class Agente:
                     if main.player_x > 0:
                         main.player_x -= 1
                 case "frente":
-                    if main.player_x < 7:
+                    if main.player_x < self.tamanho-1:
                         main.player_x += 1
             
             self.ponteiro += 1
