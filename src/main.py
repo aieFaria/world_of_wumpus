@@ -8,21 +8,19 @@ class Main:
     def __init__(self):
         pygame.init()
         # Janela de tamanho fixo
-        # self.LARGURA_TELA = 700
-        # self.ALTURA_TELA = 700
-        # self.ALTURA_BARRA = 60
 
         self.tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
         pygame.display.set_caption("World of Wumpus")
         self.clock = pygame.time.Clock()
         self.labirinto = Labirinto()
         self.agente = Agente(1, self.labirinto)
-        # self.ativa_agente = True
+        self.ativa_agente = False
         self.fonte = pygame.font.SysFont("Arial", 20, bold=True)
+        self.acao = False
 
     def desenhar_barra(self):
         # Fundo da barra completamente branco
-        pygame.draw.rect(self.tela, (255, 255, 255), (0, 0, LARGURA_TELA, ALTURA_BARRA))
+        pygame.draw.rect(self.tela, (255, 255, 255), (0, 0, self.LARGURA_TELA, self.ALTURA_BARRA))
         
         tamanho_slot = 40
         espaco_slot = 10
@@ -110,6 +108,10 @@ class Main:
                         else:
                             self.direcao = "costas"
                         break
+
+                    elif evento.key == pygame.K_KP_ENTER or evento.key == pygame.K_RETURN:
+                        print("acao")
+                        self.acao = True
                     
             # Executa o agente caso ele esteja ativo
             # self.ativa_agente define isso
@@ -127,5 +129,5 @@ class Main:
 
         pygame.quit()
 
-# index = Main()
-# index.executar(0, 0)
+index = Main()
+index.executar(0, 0)
