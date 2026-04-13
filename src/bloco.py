@@ -40,7 +40,8 @@ class Bloco:
             "flecha": pygame.image.load(os.path.join(directory_path, "resources", "flecha.png")).convert_alpha(),
             "ouro": pygame.image.load(os.path.join(directory_path, "resources", "ouro.png")).convert_alpha(),
             "nevoa": pygame.image.load(os.path.join(directory_path, "resources", "nevoa.png")).convert_alpha(),
-            "arco": pygame.image.load(os.path.join(directory_path, "resources", "arco.png")).convert_alpha()
+            "arco": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "arco.png")).convert_alpha(),
+            "casa": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "home.png")).convert_alpha()
         }
     
     # Método para visualização dos atributos do bloco
@@ -56,6 +57,7 @@ class Bloco:
             (coluna * (self.tamanho_quadrado), linha * (self.tamanho_quadrado), self.tamanho_quadrado, self.tamanho_quadrado)
         )
 
+        lista_atributos = []
         # Alteração para economizar processamento
         if (self.visible):
             bg = self.caracteristica["background"]
@@ -64,6 +66,7 @@ class Bloco:
             elif( self.hasBats ): bg = self.caracteristica["morcego"]
             elif( self.hasArrow ): bg = self.caracteristica["flecha"]
             elif( self.hasGold ): bg = self.caracteristica["ouro"]
+            if( [linha, coluna] == [0, 0] ): bg = self.caracteristica["casa"]
             
         else:
             bg = self.caracteristica["nevoa"]
@@ -113,10 +116,10 @@ class Bloco:
             return False
         
     # Reconfigurando bloco, todos parametros False por padrão
-    def reconfigurar(self, visible=False, pit=False, wumpus=False, bats=False, arrow=False, gold=False):
+    def reconfigurar(self, visible=False, pit=False, wummpus=False, bats=False, arrow=False, gold=False):
         self.visible = visible
         self.hasPit = pit
-        self.hasWumpus = wumpus
+        self.hasWumpus = wummpus
         self.hasBats = bats
         self.hasArrow = arrow
         self.hasGold = gold
