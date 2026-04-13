@@ -15,6 +15,7 @@ class Labirinto:
         self.visitadosLabirinto = set()
         self.pontuacao = 0
         self.hasArrow = False # Indica se o jogador possui a flecha
+        self.olhandoWummpus = [] # array de tupla que contém as possibilidades de olhar para Wummpus
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
@@ -35,11 +36,11 @@ class Labirinto:
 
     # Adicionando novo parametro "direcao" para indicar para qual lado personagem está olhando
     # Modificação: player_xy -> player_x, player_y
-    def desenhar(self, tela, player_x, player_y, direcao, offset_y, largura_janela, altura_janela):
+    def desenhar(self, tela, player_x, player_y, direcao, acao, offset_y, largura_janela, altura_janela):
 
         linhas, colunas = self.blocos.shape
         
-        tamanho_original = 75 # Define o tamanho original para adequação a redução de escala
+        tamanho_original = 87 # Define o tamanho original para adequação a redução de escala
         
         largura_virtual = colunas * tamanho_original
         altura_virtual = linhas * tamanho_original
@@ -58,6 +59,15 @@ class Labirinto:
 
                 if [linha, coluna] == [player_x, player_y]:
                     bloco.setVisible(True)
+                        
+                    if( self.hasArrow and acao):
+                        # Executar disparo da flecha com base na direção
+                        self.hasArrow = False
+                        #print(self.olhandoWummpus)
+                        if( self.olhando_para_Wummpus(player_x, player_y, direcao) ): #Verifica se está virado para o Wummpus
+                            # Se for modificar para indicar que wummpus está morto faça aqui dentro
+                            self.pontuacao += 1000
+                        
                 
                 # Cria o bloco na tela virtual
                 rect = bloco.criar(linha, coluna, tela_virtual)
@@ -78,14 +88,24 @@ class Labirinto:
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao -= 1000
                         # Adicionar efeito sonoro, se houver, bem aqui!
+                    
+                    # Coleta automatica do ouro
                     if( bloco.hasGold and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao += 1000
                         # Adicionar efeito sonoro, se houver, bem aqui!
+                    
+                    # Coleta automatica da flecha
                     if(bloco.hasArrow and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
-                        self.hasArrow = True
+                        self.hasArrow = True # Indica que o jogador tem flecha
                         # Adicionar efeito sonoro, se houver, bem aqui!
+
+                    if( bloco.hasBats ):
+                        # Sortear nova posição após oisar em morcegos
+                        player_x = 0
+                        player_y = 0
+
 
                     # Incrementar efeito sonoro aqui ou na movimentação
                     # Exemplo:
@@ -121,7 +141,10 @@ class Labirinto:
                 # 1 -> posicao_X  | 2 -> posicao_Y  | 3 -> visivel?
                 # 4 -> tem buraco?  | 5 -> tem wumpus?  | 6 -> tem morcegos?  | 7 -> tem flecha?  | 8 -> tem ouro?
                 if ( [linha, coluna] == [0, 1] ) or ( [linha, coluna] == [1, 0] ) or ( [linha, coluna] == [0, 0] ):
+                    
                     self.blocos[linha][coluna] = Bloco(linha, coluna, True, False, False, False, False, False)
+
+                    if( [linha, coluna] == [0, 0] ): self.blocos[linha][coluna].caracteristica["casa"]
                 else:
                     self.blocos[linha][coluna] = Bloco(linha, coluna, False, False, False, False, False, False)
 
@@ -191,18 +214,22 @@ class Labirinto:
             self.bloco = self.blocos[linha - 1][coluna] # Baixo
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
+                if (attribute == "Stench\n"): self.olhandoWummpus.append((linha-1, coluna, "frente"))
         if linha < 7:
             self.bloco = self.blocos[linha + 1][coluna] # Cima
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
+                if (attribute == "Stench\n"): self.olhandoWummpus.append((linha+1, coluna, "costas"))
         if coluna > 0:
             self.bloco = self.blocos[linha][coluna - 1]  # Esquerda
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
+                if (attribute == "Stench\n"): self.olhandoWummpus.append((linha, coluna-1, "direita"))
         if coluna < 7:
             self.bloco = self.blocos[linha][coluna + 1]  # Direita
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
+                if (attribute == "Stench\n"): self.olhandoWummpus.append((linha, coluna+1, "esquerda"))
 
     # Método para verificar se o bloco adjacente tem um Buraco, Wumpus ou Morcego
     # Ou se já possui o atributo que será escrito.
@@ -215,5 +242,9 @@ class Labirinto:
             aux = True
         return aux
 
+    def olhando_para_Wummpus(self, x, y, direcao):
+        if( (x, y, direcao) in self.olhandoWummpus ):
+            return True
+        return False
             
         
