@@ -40,8 +40,7 @@ class Main:
                 self.tela.blit(img_arco, (x_slot + 5, y_slot + 5))
 #           img_arco, img_arco.get_rect(center=rect.center)
 
-        # --- Lado Direito: Pontuação ---
-        # Renderiza o texto na cor preta para contrastar com o fundo branco
+        # Mostrando a Pontuação
         texto_pontos = self.fonte.render(f"Pontos: {self.labirinto.pontuacao}", True, (0, 0, 0)) #{self.pontuacao}
         text_rect = texto_pontos.get_rect()
         

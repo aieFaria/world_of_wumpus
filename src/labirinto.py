@@ -98,8 +98,6 @@ class Labirinto:
                         som_pulo = self.sons_lab["bafo"]
                         som_pulo.play()
 
-                    
-
         area_util_h = altura_janela - offset_y
         area_util_w = largura_janela
         
@@ -112,7 +110,6 @@ class Labirinto:
         
         labirinto_comprimido = pygame.transform.smoothscale(tela_virtual, (nova_largura, nova_altura))
         
-        # 3. Centraliza na tela real abaixo da barra superior
         inicio_x = (largura_janela - nova_largura) // 2
         inicio_y = offset_y + (area_util_h - nova_altura) // 2
         
