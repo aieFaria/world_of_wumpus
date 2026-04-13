@@ -14,13 +14,12 @@ class Main:
         self.clock = pygame.time.Clock()
         self.labirinto = Labirinto()
         self.agente = Agente(1, self.labirinto)
-        self.ativa_agente = False
         self.fonte = pygame.font.SysFont("Arial", 20, bold=True)
         self.acao = False
 
     def desenhar_barra(self):
         # Fundo da barra completamente branco
-        pygame.draw.rect(self.tela, (255, 255, 255), (0, 0, self.LARGURA_TELA, self.ALTURA_BARRA))
+        pygame.draw.rect(self.tela, (255, 255, 255), (0, 0, LARGURA_TELA, ALTURA_BARRA))
         
         tamanho_slot = 40
         espaco_slot = 10
@@ -49,7 +48,7 @@ class Main:
         
         self.tela.blit(texto_pontos, text_rect)
 
-    def executar(self, player_x, player_y, ativar_agente=True):
+    def executar(self, player_x, player_y, ativar_agente=False):
         # Alteração: uso da posição como sendo tupla substituído para lista
         # isso otimiza o código e dispensa necessidade de repetição de uma dimensão
         # que não foi alterada na movimentação
@@ -120,7 +119,7 @@ class Main:
                 # if self.agente.finalizado:
                 #     print()
                         
-            self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
+            self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, self.acao, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
             
             self.desenhar_barra()
             
