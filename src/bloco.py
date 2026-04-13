@@ -37,7 +37,8 @@ class Bloco:
             "morcego": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "morcego.png")).convert_alpha(),
             "flecha": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "flecha.png")).convert_alpha(),
             "ouro": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "ouro.png")).convert_alpha(),
-            "nevoa": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "nevoa.png")).convert_alpha()
+            "nevoa": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "nevoa.png")).convert_alpha(),
+            "arco": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "arco.png")).convert_alpha()
         }
     
     # Método para visualização dos atributos do bloco

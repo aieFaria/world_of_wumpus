@@ -16,6 +16,8 @@ class Labirinto:
         self.tamanho_quadrado = SQUARE_LENGTH
         self.blocos = np.zeros((8, 8), dtype=object) # Tamanho do labirinto, quantidade de quadrados
         self.visitadosLabirinto = set()
+        self.pontuacao = 0
+        self.hasArrow = False # Indica se o jogador possui a flecha
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
@@ -36,38 +38,85 @@ class Labirinto:
 
     # Adicionando novo parametro "direcao" para indicar para qual lado personagem está olhando
     # Modificação: player_xy -> player_x, player_y
-    def desenhar(self, tela, player_x, player_y, direcao):
+    def desenhar(self, tela, player_x, player_y, direcao, offset_y, largura_janela, altura_janela):
+
+        linhas, colunas = self.blocos.shape
+        
+        tamanho_original = 75 # Define o tamanho original para adequação a redução de escala
+        
+        largura_virtual = colunas * tamanho_original
+        altura_virtual = linhas * tamanho_original
+        
+        # Cria uma tela virtual com o tamanho perfeito original
+        tela_virtual = pygame.Surface((largura_virtual, altura_virtual))
 
         # Alteração: Considerando tamanho da matriz para os laços de repetição
         for linha in range(self.blocos.__len__()):
             for coluna in range(self.blocos[0].__len__()):
-                self.bloco = self.blocos[linha][coluna]
+                bloco = self.blocos[linha][coluna]
                 
+                bloco.tamanho_quadrado = tamanho_original
                 # print("linha ", linha, " | coluna ", coluna)
                 # print(self.blocos[linha][coluna],"\n")
 
-                rect = self.bloco.criar(linha, coluna, tela)
+                if [linha, coluna] == [player_x, player_y]:
+                    bloco.setVisible(True)
+                
+                # Cria o bloco na tela virtual
+                rect = bloco.criar(linha, coluna, tela_virtual)
 
                 # Alterado para comparar Listas
                 # variavel player_xy agora é uma lista :: A comparação continua sendo entre uma lista, podemos modifiar.
                 if [linha, coluna] == [player_x, player_y]:
-                    self.bloco.setVisible(True)
-                    
-
+                                       
                     # Redução do uso da memória, chama a imagem ja gerada que foi salva na memória
                     # ao invés de criar uma sempre
+                    #railsao = self.imagens_player[direcao]
                     railsao = self.imagens_player[direcao]
                     
-                    tela.blit(railsao, railsao.get_rect(
+                    tela_virtual.blit(railsao, railsao.get_rect(
                                        center=rect.center))
                     
+                    # Condicionais para definição da pontuação
+                    if( bloco.hasWumpus and not (player_x, player_y) in self.visitadosLabirinto ):
+                        self.visitadosLabirinto.add((player_x, player_y))
+                        self.pontuacao -= 1000
+                        # Adicionar efeito sonoro, se houver, bem aqui!
+                    if( bloco.hasGold and not (player_x, player_y) in self.visitadosLabirinto ):
+                        self.visitadosLabirinto.add((player_x, player_y))
+                        self.pontuacao += 1000
+                        # Adicionar efeito sonoro, se houver, bem aqui!
+                    if(bloco.hasArrow and not (player_x, player_y) in self.visitadosLabirinto ):
+                        self.visitadosLabirinto.add((player_x, player_y))
+                        self.hasArrow = True
+                        # Adicionar efeito sonoro, se houver, bem aqui!
+
                     # Incrementar efeito sonoro aqui ou na movimentação
                     # Exemplo:
-                    
-                    if( 'Stench\n' in self.bloco.attributes and not (player_x, player_y) in self.visitadosLabirinto):
+                    if( 'Stench\n' in bloco.attributes and not (player_x, player_y) in self.visitadosLabirinto):
                         self.visitadosLabirinto.add((player_x, player_y))
                         som_pulo = self.sons_lab["bafo"]
                         som_pulo.play()
+
+                    
+
+        area_util_h = altura_janela - offset_y
+        area_util_w = largura_janela
+        
+        tamanho_escala_w = max(1, area_util_w - 5)
+        tamanho_escala_h = max(1, area_util_h - 5)
+        
+        escala = min(tamanho_escala_w / largura_virtual, tamanho_escala_h / altura_virtual)
+        nova_largura = int(largura_virtual * escala)
+        nova_altura = int(altura_virtual * escala)
+        
+        labirinto_comprimido = pygame.transform.smoothscale(tela_virtual, (nova_largura, nova_altura))
+        
+        # 3. Centraliza na tela real abaixo da barra superior
+        inicio_x = (largura_janela - nova_largura) // 2
+        inicio_y = offset_y + (area_util_h - nova_altura) // 2
+        
+        tela.blit(labirinto_comprimido, (inicio_x, inicio_y))
 
                     
     # Modificar a função "def gerar_labirinto(self, tamanho_labirinto)". "tamanho_labirinto" será um par ordernado (linha, coluna)
