@@ -128,5 +128,5 @@ class Main:
 
         pygame.quit()
 
-index = Main()
-index.executar(0, 0)
+# index = Main()
+# index.executar(0, 0)

@@ -1,6 +1,7 @@
 # * Todas as classes
 LARGURA_TELA = 700
 ALTURA_TELA = 700
+ALTURA_TELA2 = 400
 ALTURA_BARRA = 60
 
 # - Labirinto

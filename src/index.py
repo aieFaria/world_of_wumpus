@@ -1,5 +1,7 @@
+import platform
+
 import pygame, os
-from cons import LARGURA_TELA, ALTURA_TELA
+from cons import LARGURA_TELA, ALTURA_TELA2
 from button import Button
 from main import Main
 
@@ -7,12 +9,15 @@ class Index:
     def __init__(self):
         pygame.init()
 
-        self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
+        self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA2))
+        pygame.display.set_caption("World of Wumpus")
         self.COLOR = (50, 50, 50)
-        self.main = Main()
+        # self.main = Main() -> Removido para não causar sobrecarga
+        self.directory_path = "world_of_wumpus" if platform.system() == "Windows" else ""
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size
-        return pygame.font.Font(os.path.join("world_of_wumpus", "resources", "font", "font.ttf"), size)
+        
+        return pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
 
     def iniciar(self, is_on=True):
         running = True
@@ -25,13 +30,13 @@ class Index:
             
             self.screen.fill(self.COLOR)
 
-            img = pygame.image.load(os.path.join("world_of_wumpus", "resources", "button_background.png")).convert_alpha()
-            on_off_img = pygame.image.load(os.path.join("world_of_wumpus", "resources", "on_off_background.png")).convert_alpha()
+            img = pygame.image.load(os.path.join(self.directory_path, "resources", "button_background.png")).convert_alpha()
+            on_off_img = pygame.image.load(os.path.join(self.directory_path, "resources", "on_off_background.png")).convert_alpha()
 
-            ON_BUTTON = Button(image=on_off_img, pos=(LARGURA_TELA // 2 + 170, 200), text_input="ON", font=self.get_font(15), base_color="#d7fcd4", hovering_color="#f09184")
-            OFF_BUTTON = Button(image=on_off_img, pos=(LARGURA_TELA // 2 + 170, 200), text_input="OFF", font=self.get_font(15), base_color="#d7fcd4", hovering_color="#f09184")
+            ON_BUTTON = Button(image=on_off_img, pos=(LARGURA_TELA // 2 + 170, 200), text_input="ON", font=self.get_font(15), base_color="#72eb62", hovering_color="#d7fcd4")
+            OFF_BUTTON = Button(image=on_off_img, pos=(LARGURA_TELA // 2 + 170, 200), text_input="OFF", font=self.get_font(15), base_color="#f09184", hovering_color="#d7fcd4")
             PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 200), text_input="PLAY", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
-            QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 400), text_input="QUIT", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 300), text_input="QUIT", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
 
             self.screen.blit(MENU_TEXT, MENU_RECT)
 
@@ -62,6 +67,7 @@ class Index:
 
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         print("Play")
+                        self.main = Main() # Instanciar main apenas quando apertar play
                         if is_on:
                             # Iniciar o jogo com o agente ativado. is_on = True
                             self.main.executar(0, 0, is_on)
