@@ -21,6 +21,8 @@ class Main:
         #pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
         self.fonte = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)
         self.acao = False
+
+        self.rodando = True
         self.pause = False # Variável para controlar a pausa do jogo.
 
         img_btn_central = pygame.image.load(os.path.join(DIR_PATH, "pause.png")).convert_alpha()
@@ -81,24 +83,25 @@ class Main:
         tamanho_original_lab = 64 #self.tamanho_mapa * self.labirinto.tamanho_quadrado
         #tela_virtual = pygame.Surface((tamanho_original_lab, tamanho_original_lab))
 
-        rodando = True
-        while rodando:
+        # rodando = True
+        while self.rodando:
             
             mouse_pos = pygame.mouse.get_pos() # Verificar se pode tirar daqui
 
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     # FInalizar index
-                    rodando = False
+                    self.rodando = False
 
                 # Captura do evento "Apertar no botão de pause"
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     if self.botao_central.checkForInput(mouse_pos):
                         print("Botão central clicado!")
                         self.pause = True
+                        self.rodando = False
                         self.endgame("Jogo parado")
                         # Exemplo: Fechar o jogo e voltar para o Menu Principal
-                        rodando = False 
+                        # self.rodando = False 
 
                 if evento.type == pygame.KEYDOWN and not self.ativa_agente:
 
@@ -203,7 +206,10 @@ class Main:
                         # Incrementar dificuldade, caso o jogador tenha GANHADO o jogo e não pausado.
                         # Voltar ao jogo, caso o jogador tenha PARADO o jogo
                         if (self.pause == True):
-                            self.pause == False
+                            print("ENTROU NO PAUSE")
+                            self.pause = False
+                            self.rodando = True
+                            rodando = False
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         rodando = False
                 
