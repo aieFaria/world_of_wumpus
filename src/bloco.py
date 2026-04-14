@@ -2,7 +2,7 @@ import pygame
 import os
 import platform
 
-from cons import QUADRADO_TAMANHO
+from cons import TAMANHO_QUADRADO, DIR_PATH
 
 class Bloco:
 
@@ -27,21 +27,19 @@ class Bloco:
         self.hasGold = gold
 
         self.attributes = []
-        self.tamanho_quadrado = QUADRADO_TAMANHO
+        self.tamanho_quadrado = TAMANHO_QUADRADO
         self.font = pygame.font.SysFont('Arial', 18)
 
-        directory_path = "world_of_wumpus" if platform.system() == "Windows" else ""
-
         self.caracteristica = {
-            "background": pygame.image.load(os.path.join(directory_path, "resources", "background.png")).convert_alpha(),
-            "buraco": pygame.image.load(os.path.join(directory_path, "resources", "buraco.png")).convert_alpha(),
-            "wummpus": pygame.image.load(os.path.join(directory_path, "resources", "wumpus.png")).convert_alpha(),
-            "morcego": pygame.image.load(os.path.join(directory_path, "resources", "morcego.png")).convert_alpha(),
-            "flecha": pygame.image.load(os.path.join(directory_path, "resources", "flecha.png")).convert_alpha(),
-            "ouro": pygame.image.load(os.path.join(directory_path, "resources", "ouro.png")).convert_alpha(),
-            "nevoa": pygame.image.load(os.path.join(directory_path, "resources", "nevoa.png")).convert_alpha(),
-            "arco": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "arco.png")).convert_alpha(),
-            "casa": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "home.png")).convert_alpha()
+            "background": pygame.image.load(os.path.join(DIR_PATH, "background.png")).convert_alpha(),
+            "buraco": pygame.image.load(os.path.join(DIR_PATH, "buraco.png")).convert_alpha(),
+            "wumpus": pygame.image.load(os.path.join(DIR_PATH, "wumpus.png")).convert_alpha(),
+            "morcego": pygame.image.load(os.path.join(DIR_PATH, "morcego.png")).convert_alpha(),
+            "flecha": pygame.image.load(os.path.join(DIR_PATH, "flecha.png")).convert_alpha(),
+            "ouro": pygame.image.load(os.path.join(DIR_PATH, "ouro.png")).convert_alpha(),
+            "nevoa": pygame.image.load(os.path.join(DIR_PATH, "nevoa.png")).convert_alpha(),
+            "arco": pygame.image.load(os.path.join(DIR_PATH, "arco.png")).convert_alpha(),
+            "casa": pygame.image.load(os.path.join(DIR_PATH, "home.png")).convert_alpha()
         }
     
     # Método para visualização dos atributos do bloco
@@ -49,11 +47,10 @@ class Bloco:
     #     return f"Linha: {self.pos_X} - Coluna: {self.pos_Y}\nVisibilidade: {self.visible}"
 
     def criar(self, linha, coluna, tela):
-        cor = pygame.Color("gray")
         
         rect = pygame.draw.rect(
             tela,
-            cor,
+            pygame.Color("gray"),
             (coluna * (self.tamanho_quadrado), linha * (self.tamanho_quadrado), self.tamanho_quadrado, self.tamanho_quadrado)
         )
 
@@ -62,7 +59,7 @@ class Bloco:
         if (self.visible):
             bg = self.caracteristica["background"]
             if( self.hasPit ): bg = self.caracteristica["buraco"]
-            elif( self.hasWumpus ): bg = self.caracteristica["wummpus"]
+            elif( self.hasWumpus ): bg = self.caracteristica["wumpus"]
             elif( self.hasBats ): bg = self.caracteristica["morcego"]
             elif( self.hasArrow ): bg = self.caracteristica["flecha"]
             elif( self.hasGold ): bg = self.caracteristica["ouro"]
@@ -116,10 +113,10 @@ class Bloco:
             return False
         
     # Reconfigurando bloco, todos parametros False por padrão
-    def reconfigurar(self, visible=False, pit=False, wummpus=False, bats=False, arrow=False, gold=False):
+    def reconfigurar(self, visible=False, pit=False, wumpus=False, bats=False, arrow=False, gold=False):
         self.visible = visible
         self.hasPit = pit
-        self.hasWumpus = wummpus
+        self.hasWumpus = wumpus
         self.hasBats = bats
         self.hasArrow = arrow
         self.hasGold = gold

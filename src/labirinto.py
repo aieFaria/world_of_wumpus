@@ -10,23 +10,23 @@ class Labirinto:
     def __init__(self):
         self.board = np.zeros((8, 8))
         self.cores = [pygame.Color(RECT_COLOR), pygame.Color("gray")]
-        self.tamanho_quadrado = QUADRADO_TAMANHO
+        self.tamanho_quadrado = TAMANHO_QUADRADO
         self.blocos = np.zeros((8, 8), dtype=object) # Tamanho do labirinto, quantidade de quadrados
         self.visitadosLabirinto = set()
         self.pontuacao = 0
         self.hasArrow = False # Indica se o jogador possui a flecha
-        self.olhandoWummpus = [] # array de tupla que contém as possibilidades de olhar para Wummpus
+        self.olhandoWumpus = [] # array de tupla que contém as possibilidades de olhar para wumpus
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
-            "frente": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_frente.png")).convert_alpha(),
+            "frente": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_frente_p.png")).convert_alpha(),
             "costas": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_costas.png")).convert_alpha(),
             "direita": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_direita.png")).convert_alpha(),
             "esquerda": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_esquerda.png")).convert_alpha()
         }
 
         self.sons_lab = {
-            "bafo": pygame.mixer.Sound(os.path.join(DIR_PATH, "bafoDeBosta.mp3"))
+            "bafo": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "bafoDeBosta.mp3"))
             #"brisa": pygame.mixer.Sound("pulo.wav")
         }
 
@@ -64,9 +64,9 @@ class Labirinto:
                     if( self.hasArrow and acao):
                         # Executar disparo da flecha com base na direção
                         self.hasArrow = False
-                        #print(self.olhandoWummpus)
-                        if( self.olhando_para_Wummpus(player_x, player_y, direcao) ): #Verifica se está virado para o Wummpus
-                            # Se for modificar para indicar que wummpus está morto faça aqui dentro
+                        #print(self.olhandoWumpus)
+                        if( self.olhando_para_Wumpus(player_x, player_y, direcao) ): #Verifica se está virado para o Wumpus
+                            # Se for modificar para indicar que wumpus está morto faça aqui dentro
                             self.pontuacao += 1000
                         
                 
@@ -184,15 +184,15 @@ class Labirinto:
                 self.blocos[num_x][num_y].reconfigurar(False, False, False, False, False, True)
             if (i < qtd_buracos):
                 self.blocos[num_x][num_y].reconfigurar(False, True, False, False, False, False)
-                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wummpus
+                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Breeze\n")
             if (i == qtd_wumpus-1):
                 self.blocos[num_x][num_y].reconfigurar(False, False, True, False, False, False)
-                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wummpus
+                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Stench\n")
             if (i == qtd_morcegos-1):
                 self.blocos[num_x][num_y].reconfigurar(False, False, False, True, False, False)
-                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wummpus
+                self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Flapping")
             
 
@@ -217,22 +217,22 @@ class Labirinto:
             self.bloco = self.blocos[linha - 1][coluna] # Baixo
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
-                if (attribute == "Stench\n"): self.olhandoWummpus.append((linha-1, coluna, "frente"))
+                if (attribute == "Stench\n"): self.olhandoWumpus.append((linha-1, coluna, "frente"))
         if linha < 7:
             self.bloco = self.blocos[linha + 1][coluna] # Cima
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
-                if (attribute == "Stench\n"): self.olhandoWummpus.append((linha+1, coluna, "costas"))
+                if (attribute == "Stench\n"): self.olhandoWumpus.append((linha+1, coluna, "costas"))
         if coluna > 0:
             self.bloco = self.blocos[linha][coluna - 1]  # Esquerda
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
-                if (attribute == "Stench\n"): self.olhandoWummpus.append((linha, coluna-1, "direita"))
+                if (attribute == "Stench\n"): self.olhandoWumpus.append((linha, coluna-1, "direita"))
         if coluna < 7:
             self.bloco = self.blocos[linha][coluna + 1]  # Direita
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
-                if (attribute == "Stench\n"): self.olhandoWummpus.append((linha, coluna+1, "esquerda"))
+                if (attribute == "Stench\n"): self.olhandoWumpus.append((linha, coluna+1, "esquerda"))
 
     # Método para verificar se o bloco adjacente tem um Buraco, Wumpus ou Morcego
     # Ou se já possui o atributo que será escrito.
@@ -245,8 +245,8 @@ class Labirinto:
             aux = True
         return aux
 
-    def olhando_para_Wummpus(self, x, y, direcao):
-        if( (x, y, direcao) in self.olhandoWummpus ):
+    def olhando_para_Wumpus(self, x, y, direcao):
+        if( (x, y, direcao) in self.olhandoWumpus ):
             return True
         return False
             

@@ -31,7 +31,6 @@ class Main:
         )
 
     def desenhar_barra(self):
-
         pygame.draw.rect(self.tela, PRINCIPAL_COLOR, (0, 0, LARGURA_TELA, ALTURA_BARRA))
         
         tamanho_slot = 40
@@ -87,7 +86,6 @@ class Main:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     # FInalizar index
-                    #self.teste = True
                     rodando = False
 
                 # Captura do evento "Apertar no botão de pause"
@@ -156,9 +154,52 @@ class Main:
             
             pygame.display.flip()
             self.clock.tick(5)
-            #return self.teste
 
         #pygame.quit()
 
 # index = Main()
 # index.executar(0, 0)
+
+    # Variável texto pode ser uma string, contendo as situações que levaram o agente a fim de jogo:
+    #   - Agente venceu! (Matou o Wumpus (+500) e pegou o Ouro (+1000))
+    #   - O agente morreu (caiu num buraco)
+    #   - O agente morreu (wumpus o matou)
+    #   - Morcegos te jogaram em (...)
+    #   - Se o agente não pegar o ouro, não pode sair da caverna/labirinto
+    def endgame(self, texto):
+        self.tela.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
+
+        rodando = True
+        while rodando:
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            FONT = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
+
+            ENDGAME_TEXT = FONT.render(f"{texto}", True, "White")
+            ENDGAME_RECT = ENDGAME_TEXT.get_rect(center=(LARGURA_TELA // 2, 100))
+
+            img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
+
+            PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 200), text_input="PLAY", font=FONT, base_color="#d7fcd4", hovering_color="White")
+            QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 400), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
+            
+            self.tela.blit(ENDGAME_TEXT, ENDGAME_RECT)
+
+            for button in [PLAY_BUTTON, QUIT_BUTTON]:
+                button.changeColor(MENU_MOUSE_POS)
+                button.update(self.tela)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    rodando = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        print("Play")
+                        # Incrementar dificuldade, caso o jogador aperte.
+                    if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        rodando = False
+                
+            pygame.display.flip()
+        
+        # pygame.quit()
+        # Se o jogador vencer, incrementar 1 na variável de TAMANHO DO LABAIRINTO 7x7 -> 8x8, etc 
