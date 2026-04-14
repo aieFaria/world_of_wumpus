@@ -175,21 +175,32 @@ class Main:
     #   - Morcegos te jogaram em (...)
     #   - Se o agente não pegar o ouro, não pode sair da caverna/labirinto
     def endgame(self, texto):
+
+        fundo_pausado = self.tela.copy()
         self.tela.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
+
+        pelicula = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
+        pelicula.set_alpha(170) # Nível de escurecimento (0 a 255)
+        pelicula.fill((0, 0, 0)) 
+
+        # Carregando constantes apenas uma vez
+        FONT = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
+        ENDGAME_TEXT = FONT.render(f"{texto}", True, "White")
+        ENDGAME_RECT = ENDGAME_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2 - 59*2 +50)) # 
+        # 59 PIXELS
+        # -(59 + 100 + 59 - 35)
+        img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
+
+        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="PLAY", font=FONT, base_color="#d7fcd4", hovering_color="White")
+        QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
 
         rodando = True
         while rodando:
             MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-            FONT = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
-
-            ENDGAME_TEXT = FONT.render(f"{texto}", True, "White")
-            ENDGAME_RECT = ENDGAME_TEXT.get_rect(center=(LARGURA_TELA // 2, 100))
-
-            img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
-
-            PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 200), text_input="PLAY", font=FONT, base_color="#d7fcd4", hovering_color="White")
-            QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 400), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
+            # Colocando fundo pausado!
+            self.tela.blit(fundo_pausado, (0, 0))
+            self.tela.blit(pelicula, (0, 0))
             
             self.tela.blit(ENDGAME_TEXT, ENDGAME_RECT)
 
