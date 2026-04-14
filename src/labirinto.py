@@ -8,10 +8,10 @@ from bloco import Bloco
 class Labirinto:
 
     def __init__(self):
-        self.board = np.zeros((8, 8))
+        self.board = np.zeros((TAMANHO_LAB, TAMANHO_LAB))
         self.cores = [pygame.Color(RECT_COLOR), pygame.Color("gray")]
         self.tamanho_quadrado = TAMANHO_QUADRADO
-        self.blocos = np.zeros((8, 8), dtype=object) # Tamanho do labirinto, quantidade de quadrados
+        self.blocos = np.zeros((TAMANHO_LAB, TAMANHO_LAB), dtype=object) # Tamanho do labirinto, quantidade de quadrados
         self.visitadosLabirinto = set()
         self.pontuacao = 0
         self.hasArrow = False # Indica se o jogador possui a flecha
@@ -142,8 +142,8 @@ class Labirinto:
     # Modificar a função "def gerar_labirinto(self, tamanho_labirinto)". "tamanho_labirinto" será um par ordernado (linha, coluna)
     # Tamanho padrão, aumentando a cada vitória ou definido pelo usuário.
     def gerar_labirinto(self):
-        for linha in range(8):
-            for coluna in range(8):
+        for linha in range(TAMANHO_LAB):
+            for coluna in range(TAMANHO_LAB):
                 # ParÂmetros de Bloco: 
                 # 1 -> posicao_X  | 2 -> posicao_Y  | 3 -> visivel?
                 # 4 -> tem buraco?  | 5 -> tem wumpus?  | 6 -> tem morcegos?  | 7 -> tem flecha?  | 8 -> tem ouro?
@@ -166,14 +166,14 @@ class Labirinto:
 
         # Os dados abaixo são configurados somente uma vez, por isto estão neste método
         for i in range(ind_gold):
-            num_x = random.randint(0, 7)
-            num_y = random.randint(0, 7)
+            num_x = random.randint(0, TAMANHO_LAB-1)
+            num_y = random.randint(0, TAMANHO_LAB-1)
 
             # Verificar caso em que números aleatórios iguais são gerados (bem raro, imagino)
             if (self.verificar_num_aleatorios(num_x, num_y, backup_list)):
                 while (self.verificar_num_aleatorios(num_x, num_y, backup_list)):
-                    num_x = random.randint(0, 7)
-                    num_y = random.randint(0, 7)
+                    num_x = random.randint(0, TAMANHO_LAB-1)
+                    num_y = random.randint(0, TAMANHO_LAB-1)
                 # É possível que o número gerado seja igual novamente
                 # Ou caia em uma posição inicial: (0,0), (0,1), (1,0) ou (1,1)
                 # Solução: utilizar o While
@@ -222,7 +222,7 @@ class Labirinto:
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
                 if (attribute == "Stench\n"): self.olhandoWumpus.append((linha-1, coluna, "frente"))
-        if linha < 7:
+        if linha < TAMANHO_LAB-1:
             self.bloco = self.blocos[linha + 1][coluna] # Cima
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
@@ -232,7 +232,7 @@ class Labirinto:
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
                 if (attribute == "Stench\n"): self.olhandoWumpus.append((linha, coluna-1, "direita"))
-        if coluna < 7:
+        if coluna < TAMANHO_LAB-1:
             self.bloco = self.blocos[linha][coluna + 1]  # Direita
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
