@@ -2,7 +2,7 @@ import os, random, platform
 import numpy as np
 import pygame
 
-from cons import RECT_COLOR, QUADRADO_TAMANHO
+from cons import *
 from bloco import Bloco
 
 class Labirinto:
@@ -19,14 +19,14 @@ class Labirinto:
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
-            "frente": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "player", "railsao_frente.png")).convert_alpha(),
-            "costas": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "player", "railsao_costas.png")).convert_alpha(),
-            "direita": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "player", "railsao_direita.png")).convert_alpha(),
-            "esquerda": pygame.image.load(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "player", "railsao_esquerda.png")).convert_alpha()
+            "frente": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_frente.png")).convert_alpha(),
+            "costas": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_costas.png")).convert_alpha(),
+            "direita": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_direita.png")).convert_alpha(),
+            "esquerda": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_esquerda.png")).convert_alpha()
         }
 
         self.sons_lab = {
-            "bafo": pygame.mixer.Sound(os.path.join("world_of_wumpus" if platform.system() == "Windows" else "", "resources", "bafoDeBosta.mp3"))
+            "bafo": pygame.mixer.Sound(os.path.join(DIR_PATH, "bafoDeBosta.mp3"))
             #"brisa": pygame.mixer.Sound("pulo.wav")
         }
 
@@ -47,6 +47,7 @@ class Labirinto:
         
         # Cria uma tela virtual com o tamanho perfeito original
         tela_virtual = pygame.Surface((largura_virtual, altura_virtual))
+        tela_virtual.fill(PRINCIPAL_COLOR)
 
         # Alteração: Considerando tamanho da matriz para os laços de repetição
         for linha in range(self.blocos.__len__()):
@@ -113,6 +114,8 @@ class Labirinto:
                         self.visitadosLabirinto.add((player_x, player_y))
                         som_pulo = self.sons_lab["bafo"]
                         som_pulo.play()
+
+        pygame.draw.rect(tela_virtual, (0, 0, 0), tela_virtual.get_rect(), 6)
 
         area_util_h = altura_janela - offset_y
         area_util_w = largura_janela

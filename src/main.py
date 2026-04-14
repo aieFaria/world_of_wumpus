@@ -1,6 +1,9 @@
 # Example file showing a basic pygame "game loop"
+import os
+
 import pygame
-from cons import LARGURA_TELA, ALTURA_TELA, ALTURA_BARRA
+from button import Button
+from cons import *
 from labirinto import Labirinto
 from agente import Agente
 
@@ -10,22 +13,32 @@ class Main:
         # Janela de tamanho fixo
 
         self.tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
+        self.tela.fill(PRINCIPAL_COLOR)
         pygame.display.set_caption("World of Wumpus")
         self.clock = pygame.time.Clock()
         self.labirinto = Labirinto()
         self.agente = Agente(1, self.labirinto)
-        self.fonte = pygame.font.SysFont("Arial", 20, bold=True)
+        #pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
+        self.fonte = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)
         self.acao = False
 
+        img_btn_central = pygame.image.load(os.path.join(DIR_PATH, "pause.png")).convert_alpha()
+        #img_btn_central.fill((255, 255, 255))
+
+        self.botao_central = Button(
+            image=img_btn_central.copy(), 
+            pos=((LARGURA_TELA)//2, ALTURA_BARRA // 2)
+        )
+
     def desenhar_barra(self):
-        # Fundo da barra completamente branco
-        pygame.draw.rect(self.tela, (255, 255, 255), (0, 0, LARGURA_TELA, ALTURA_BARRA))
+
+        pygame.draw.rect(self.tela, PRINCIPAL_COLOR, (0, 0, LARGURA_TELA, ALTURA_BARRA))
         
         tamanho_slot = 40
         espaco_slot = 10
         y_slot = (ALTURA_BARRA - tamanho_slot) // 2
         
-        # Desenhando 3 slots como exemplo (para flecha, ouro, etc.)
+        # Desenhando slot
         for i in range(1):
             x_slot = 20 + i * (tamanho_slot + espaco_slot)
             # Fundo do slot (cinza claro para destacar do branco)
@@ -37,9 +50,15 @@ class Main:
                 img_arco = self.labirinto.bloco.caracteristica["arco"]
                 self.tela.blit(img_arco, (x_slot + 5, y_slot + 5))
 #           img_arco, img_arco.get_rect(center=rect.center)
+        
+        # Exemplo de bloco centralizado
+        # pygame.draw.rect(self.tela, (255, 255, 255), ((LARGURA_TELA-tamanho_slot)//2, y_slot, tamanho_slot, tamanho_slot))
+        mouse_pos = pygame.mouse.get_pos()
+        self.botao_central.changeColorImagem(mouse_pos)
+        self.botao_central.update(self.tela)
 
         # Mostrando a Pontuação
-        texto_pontos = self.fonte.render(f"Pontos: {self.labirinto.pontuacao}", True, (0, 0, 0)) #{self.pontuacao}
+        texto_pontos = self.fonte.render(f"Pontos: {self.labirinto.pontuacao}", True, (255, 255, 255)) #{self.pontuacao}
         text_rect = texto_pontos.get_rect()
         
         # Centraliza verticalmente e alinha à direita com uma margem de 20px
@@ -62,10 +81,22 @@ class Main:
 
         rodando = True
         while rodando:
+            
+            mouse_pos = pygame.mouse.get_pos() # Verificar se pode tirar daqui
 
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
+                    # FInalizar index
+                    #self.teste = True
                     rodando = False
+
+                # Captura do evento "Apertar no botão de pause"
+                if evento.type == pygame.MOUSEBUTTONDOWN:
+                    if self.botao_central.checkForInput(mouse_pos):
+                        print("Botão central clicado!")
+                        # Exemplo: Fechar o jogo e voltar para o Menu Principal
+                        rodando = False 
+
                 if evento.type == pygame.KEYDOWN and not self.ativa_agente:
 
                     # Condicional modificada para inalterar posição quando personagem não estiver olhando 
@@ -125,8 +156,9 @@ class Main:
             
             pygame.display.flip()
             self.clock.tick(5)
+            #return self.teste
 
-        pygame.quit()
+        #pygame.quit()
 
 # index = Main()
 # index.executar(0, 0)
