@@ -28,7 +28,7 @@ class Bloco:
 
         self.attributes = []
         self.tamanho_quadrado = TAMANHO_QUADRADO
-        self.font = pygame.font.SysFont('Arial', 18)
+        self.font = pygame.font.SysFont('Arial', 20)
 
         self.caracteristica = {
             "background": pygame.image.load(os.path.join(DIR_PATH, "background.png")).convert_alpha(),
@@ -47,14 +47,13 @@ class Bloco:
     #     return f"Linha: {self.pos_X} - Coluna: {self.pos_Y}\nVisibilidade: {self.visible}"
 
     def criar(self, linha, coluna, tela):
-        
         rect = pygame.draw.rect(
             tela,
             pygame.Color("gray"),
             (coluna * (self.tamanho_quadrado), linha * (self.tamanho_quadrado), self.tamanho_quadrado, self.tamanho_quadrado)
         )
 
-        lista_atributos = []
+        # lista_atributos = []
         # Alteração para economizar processamento
         if (self.visible):
             bg = self.caracteristica["background"]
@@ -71,7 +70,7 @@ class Bloco:
         tela.blit(bg, bg.get_rect(center=rect.center))
         
         if self.attributes and self.visible:
-            text_surf = self.font.render(f"{''.join(self.attributes)}", True, pygame.Color("white"))
+            text_surf = self.font.render(f"{''.join(self.attributes)}", True, pygame.Color("Black"))
             text_rect = text_surf.get_rect(center=rect.center)
             tela.blit(text_surf, text_rect)
 

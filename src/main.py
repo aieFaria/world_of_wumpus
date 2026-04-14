@@ -21,6 +21,7 @@ class Main:
         #pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
         self.fonte = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)
         self.acao = False
+        self.pause = False # Variável para controlar a pausa do jogo.
 
         img_btn_central = pygame.image.load(os.path.join(DIR_PATH, "pause.png")).convert_alpha()
         #img_btn_central.fill((255, 255, 255))
@@ -29,6 +30,8 @@ class Main:
             image=img_btn_central.copy(), 
             pos=((LARGURA_TELA)//2, ALTURA_BARRA // 2)
         )
+
+    # def 
 
     def desenhar_barra(self):
         pygame.draw.rect(self.tela, PRINCIPAL_COLOR, (0, 0, LARGURA_TELA, ALTURA_BARRA))
@@ -92,6 +95,8 @@ class Main:
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     if self.botao_central.checkForInput(mouse_pos):
                         print("Botão central clicado!")
+                        self.pause = True
+                        self.endgame("Jogo parado")
                         # Exemplo: Fechar o jogo e voltar para o Menu Principal
                         rodando = False 
 
@@ -195,7 +200,10 @@ class Main:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         print("Play")
-                        # Incrementar dificuldade, caso o jogador aperte.
+                        # Incrementar dificuldade, caso o jogador tenha GANHADO o jogo e não pausado.
+                        # Voltar ao jogo, caso o jogador tenha PARADO o jogo
+                        if (self.pause == True):
+                            self.pause == False
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         rodando = False
                 

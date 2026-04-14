@@ -26,8 +26,8 @@ class Labirinto:
         }
 
         self.sons_lab = {
-            "bafo": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "bafoDeBosta.mp3"))
-            #"brisa": pygame.mixer.Sound("pulo.wav")
+            "bafo": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "bafoDeBosta.mp3")),
+            # "brisa": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "brisa.mp3"))
         }
 
         # Geração do labirinto ao iniciar, serve para acessar os blocos apenas quando for necessário
@@ -68,7 +68,6 @@ class Labirinto:
                         if( self.olhando_para_Wumpus(player_x, player_y, direcao) ): #Verifica se está virado para o Wumpus
                             # Se for modificar para indicar que wumpus está morto faça aqui dentro
                             self.pontuacao += 1000
-                        
                 
                 # Cria o bloco na tela virtual
                 rect = bloco.criar(linha, coluna, tela_virtual)
@@ -85,32 +84,37 @@ class Labirinto:
                     tela_virtual.blit(railsao, railsao.get_rect(center=rect.center))
                     
                     # Condicionais para definição da pontuação
-                    if( bloco.hasWumpus and not (player_x, player_y) in self.visitadosLabirinto ):
+                    if ( bloco.hasWumpus and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao -= 1000
                         # Adicionar efeito sonoro, se houver, bem aqui!
                     
                     # Coleta automatica do ouro
-                    if( bloco.hasGold and not (player_x, player_y) in self.visitadosLabirinto ):
+                    if ( bloco.hasGold and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao += 1000
                         # Adicionar efeito sonoro, se houver, bem aqui!
                     
                     # Coleta automatica da flecha
-                    if(bloco.hasArrow and not (player_x, player_y) in self.visitadosLabirinto ):
+                    if (bloco.hasArrow and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.hasArrow = True # Indica que o jogador tem flecha
                         # Adicionar efeito sonoro, se houver, bem aqui!
 
-                    if( bloco.hasBats ):
+                    if ( bloco.hasBats ):
                         # Sortear nova posição após oisar em morcegos
                         player_x = 0
                         player_y = 0
 
-
                     # Incrementar efeito sonoro aqui ou na movimentação
                     # Exemplo:
-                    if( 'Stench\n' in bloco.attributes and not (player_x, player_y) in self.visitadosLabirinto):
+                    # if ( bloco.attributes is None ):
+                    #     pygame.mixer.Sound.stop()
+                    # if ( 'Breeze\n' in bloco.attributes ):
+                    #     self.visitadosLabirinto.add((player_x, player_y))
+                    #     som_pulo = self.sons_lab["brisa"]
+                    #     som_pulo.play()
+                    if ( 'Stench\n' in bloco.attributes and not (player_x, player_y) in self.visitadosLabirinto):
                         self.visitadosLabirinto.add((player_x, player_y))
                         som_pulo = self.sons_lab["bafo"]
                         som_pulo.play()
