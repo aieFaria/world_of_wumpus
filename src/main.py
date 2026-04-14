@@ -86,6 +86,7 @@ class Main:
         # rodando = True
         while self.rodando:
             
+            self.acao = False
             mouse_pos = pygame.mouse.get_pos() # Verificar se pode tirar daqui
 
             for evento in pygame.event.get():
@@ -111,7 +112,7 @@ class Main:
                         # player_y substitui posicao_inicial[1]
                         print(self.player_y)
                         if self.direcao == "direita":
-                            if self.player_y < 7:
+                            if self.player_y < TAMANHO_LAB-1:
                                 self.player_y += 1
                         else:
                             self.direcao = "direita"
@@ -130,7 +131,7 @@ class Main:
                         # player_x substitui posicao_inicial[0]
                         print(self.player_x)
                         if self.direcao == "frente":
-                            if self.player_x < 7:
+                            if self.player_x < TAMANHO_LAB-1:
                                 self.player_x += 1
                         else:
                             self.direcao = "frente"
@@ -146,7 +147,7 @@ class Main:
                         break
 
                     elif evento.key == pygame.K_KP_ENTER or evento.key == pygame.K_RETURN:
-                        print("acao")
+                        #print("acao")
                         self.acao = True
                     
             # Executa o agente caso ele esteja ativo

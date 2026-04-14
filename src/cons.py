@@ -12,7 +12,7 @@ DIR_PATH = os.path.join("world_of_wumpus" if platform.system() == "Windows" else
 
 # - Labirinto
 RECT_COLOR = "skyblue"
-TAMANHO_LAB = 7
+TAMANHO_LAB = 6
 TAMANHO_QUADRADO = 700 // TAMANHO_LAB
 PRINCIPAL_COLOR = (50, 50, 50)
 

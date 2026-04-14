@@ -15,7 +15,10 @@ class Labirinto:
         self.visitadosLabirinto = set()
         self.pontuacao = 0
         self.hasArrow = False # Indica se o jogador possui a flecha
+        self.qtd_flechas = 0 
         self.olhandoWumpus = [] # array de tupla que contém as possibilidades de olhar para wumpus
+        # Definição das quantidades de cada coisa no mapa: Configuração padrão Labirinto 6x6
+        self.dic_quantidades = {"morcegos": 2, "ouro": 3, "wumpus": 2, "flecha": 2, "buracos": 4 }
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
@@ -63,7 +66,10 @@ class Labirinto:
                         
                     if( self.hasArrow and acao):
                         # Executar disparo da flecha com base na direção
-                        self.hasArrow = False
+                        print("acao: ", self.qtd_flechas)
+                        self.qtd_flechas -= 1
+                        if self.qtd_flechas == 0:
+                            self.hasArrow = False
                         #print(self.olhandoWumpus)
                         if( self.olhando_para_Wumpus(player_x, player_y, direcao) ): #Verifica se está virado para o Wumpus
                             # Se for modificar para indicar que wumpus está morto faça aqui dentro
@@ -90,15 +96,18 @@ class Labirinto:
                         # Adicionar efeito sonoro, se houver, bem aqui!
                     
                     # Coleta automatica do ouro
-                    if ( bloco.hasGold and not (player_x, player_y) in self.visitadosLabirinto ):
+                    if ( bloco.hasGold and not (player_x, player_y) in self.visitadosLabirinto):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao += 1000
                         # Adicionar efeito sonoro, se houver, bem aqui!
                     
                     # Coleta automatica da flecha
-                    if (bloco.hasArrow and not (player_x, player_y) in self.visitadosLabirinto ):
+                    if ( bloco.hasArrow and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
+                        self.qtd_flechas += 1 # Soma 1 na mochila do jogador
+                        print("flechas: ", self.qtd_flechas)
                         self.hasArrow = True # Indica que o jogador tem flecha
+                        #bloco.hasArrow = False
                         # Adicionar efeito sonoro, se houver, bem aqui!
 
                     if ( bloco.hasBats ):
@@ -156,16 +165,23 @@ class Labirinto:
                     self.blocos[linha][coluna] = Bloco(linha, coluna, False, False, False, False, False, False)
 
         #  Tornar qtd de morcegos maior que 1, a depender do tamanho do labirinto.
-        qtd_buracos = (self.blocos.__len__() * self.blocos.__len__()) // 10
-        qtd_wumpus = qtd_buracos + 1
-        qtd_morcegos = qtd_wumpus + 1
-        ind_arrow = qtd_morcegos + 1
-        ind_gold = ind_arrow + 1
+        # limite_buracos = (self.blocos.__len__() * self.blocos.__len__()) // 10
+        # limite_wumpus = limite_buracos + 1
+        # limite_morcegos = limite_wumpus + 1
+        # limite_arrow = limite_morcegos + 1
+        # limite_gold = limite_arrow + 1
+
+
+        limite_buracos = self.dic_quantidades["buracos"]
+        limite_wumpus = limite_buracos + self.dic_quantidades["wumpus"]
+        limite_morcegos = limite_wumpus + self.dic_quantidades["morcegos"]
+        limite_arrow = limite_morcegos + self.dic_quantidades["flecha"]
+        limite_gold = limite_arrow + self.dic_quantidades["ouro"]
 
         backup_list = []
 
         # Os dados abaixo são configurados somente uma vez, por isto estão neste método
-        for i in range(ind_gold):
+        for i in range(limite_gold):
             num_x = random.randint(0, TAMANHO_LAB-1)
             num_y = random.randint(0, TAMANHO_LAB-1)
 
@@ -181,23 +197,23 @@ class Labirinto:
             else:
                 backup_list.append([num_x, num_y])
                 #print(f"backup_list: {backup_list}")
-
-            if (i == ind_arrow-1):
-                self.blocos[num_x][num_y].reconfigurar(False, False, False, False, True, False)
-            if (i == ind_gold-1):
-                self.blocos[num_x][num_y].reconfigurar(False, False, False, False, False, True)
-            if (i < qtd_buracos):
+            if (i < limite_buracos):
                 self.blocos[num_x][num_y].reconfigurar(False, True, False, False, False, False)
                 self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Breeze\n")
-            if (i == qtd_wumpus-1):
+            elif (i < limite_wumpus):
                 self.blocos[num_x][num_y].reconfigurar(False, False, True, False, False, False)
                 self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Stench\n")
-            if (i == qtd_morcegos-1):
+            elif (i < limite_morcegos):
                 self.blocos[num_x][num_y].reconfigurar(False, False, False, True, False, False)
                 self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Flapping")
+            elif (i < limite_arrow):
+                self.blocos[num_x][num_y].reconfigurar(False, False, False, False, True, False)
+            elif (i < limite_gold):
+                self.blocos[num_x][num_y].reconfigurar(False, False, False, False, False, True)
+            
             
 
             #print(f"{i} - número x: {num_x}")
