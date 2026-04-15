@@ -1,6 +1,4 @@
-import pygame
-import os
-import platform
+import os, pygame
 
 from cons import TAMANHO_QUADRADO, DIR_PATH
 

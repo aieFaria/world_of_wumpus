@@ -1,5 +1,3 @@
-import platform
-
 import pygame, os
 from cons import *
 from button import Button
@@ -11,8 +9,8 @@ class Index:
 
         self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA2))
         pygame.display.set_caption("World of Wumpus")
-        # self.COLOR = (50, 50, 50) -> Modificado para cor principal
-        # self.main = Main() -> Removido para não causar sobrecarga
+        self.tamanho_lab = TAMANHO_LAB
+        self.main = None
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size
         
@@ -20,12 +18,15 @@ class Index:
 
     def iniciar(self, is_on=True):
         running = True
+
         while running:
+
             MENU_MOUSE_POS = pygame.mouse.get_pos()
-            #print("MENU_MOUSE_POS:", MENU_MOUSE_POS)
 
             MENU_TEXT = self.get_font(40).render("WORLD OF WUMPUS", True, "White")
-            MENU_RECT = MENU_TEXT.get_rect(center=(LARGURA_TELA // 2, 100))
+            MENU_RECT = MENU_TEXT.get_rect(center=(LARGURA_TELA // 2, 80))
+            SIZE_TEXT = self.get_font(10).render(f"Tamanho do labirinto: {self.tamanho_lab}x{self.tamanho_lab}", True, "White")
+            SIZE_RECT = SIZE_TEXT.get_rect(center=(LARGURA_TELA // 2, 480))
             
             self.screen.fill(PRINCIPAL_COLOR)
 
@@ -35,9 +36,11 @@ class Index:
             ON_BUTTON = Button(image=on_off_img, pos=(LARGURA_TELA // 2 + 170, 200), text_input="ON", font=self.get_font(15), base_color="#72eb62", hovering_color="#d7fcd4")
             OFF_BUTTON = Button(image=on_off_img, pos=(LARGURA_TELA // 2 + 170, 200), text_input="OFF", font=self.get_font(15), base_color="#f09184", hovering_color="#d7fcd4")
             PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 200), text_input="PLAY", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
-            QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 300), text_input="QUIT", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            OPTIONS_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 300), text_input="OPTIONS", font=self.get_font(29), base_color="#d7fcd4", hovering_color="White")
+            QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 400), text_input="QUIT", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
 
             self.screen.blit(MENU_TEXT, MENU_RECT)
+            self.screen.blit(SIZE_TEXT, SIZE_RECT)
 
             if is_on:
                 ON_BUTTON.changeColor(MENU_MOUSE_POS)
@@ -46,7 +49,7 @@ class Index:
                 OFF_BUTTON.changeColor(MENU_MOUSE_POS)
                 OFF_BUTTON.update(self.screen)
             
-            for button in [PLAY_BUTTON, QUIT_BUTTON]:
+            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
                 button.update(self.screen)
 
@@ -57,35 +60,71 @@ class Index:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if is_on:
                         if ON_BUTTON.checkForInput(MENU_MOUSE_POS):
-                            #print("ON")
                             is_on = False
                     else:
                         if OFF_BUTTON.checkForInput(MENU_MOUSE_POS):
-                            #print("OFF")
                             is_on = True
 
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        #print("Play")
-                        self.main = Main() # Instanciar main apenas quando apertar play
-                        if is_on:
-                            # Iniciar o jogo com o agente ativado. is_on = True
-                            self.main.executar(0, 0, is_on)
-                            
-                        else:
-                            # is_on = False, iniciar o jogo com o agente desativado
-                            self.main.executar(0, 0, is_on)
+                        self.main = Main(self.tamanho_lab)
+                        self.main.executar(0, 0, is_on)
+                        self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA2))
+                        pygame.display.set_caption("World of Wumpus")
 
-                        # Retornar a tela principal com tamanho correto
+                    if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        self.tamanho_lab = self.show_options()
                         self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA2))
                         pygame.display.set_caption("World of Wumpus")
 
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         running = False
             
-            #pygame.display.update()
             pygame.display.flip()
 
         pygame.quit()
+
+    """
+    Método que desenha a tela de opções
+    """
+    def show_options(self):
+        tamanho_lab = self.tamanho_lab
+        clock = pygame.time.Clock()
+        running = True
+
+        while running:
+            # self.screen.fill(PRINCIPAL_COLOR)
+            self.screen.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
+
+            OPTIONS_TEXT = self.get_font(40).render("OPTIONS", True, "White")
+            OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(LARGURA_TELA // 2, 80))
+            SIZE_TEXT = self.get_font(30).render(f"Tamanho: {tamanho_lab}x{tamanho_lab}", True, "White")
+            SIZE_RECT = SIZE_TEXT.get_rect(center=(LARGURA_TELA // 2, 180))
+            # TECLA ENTER E ESC voltam e salvam, ambas
+            HELP_TEXT = self.get_font(20).render("↑/↓ mudar tamanho\n\n ENTER salvar\n\n ESC voltar", True, "White")
+            HELP_RECT = HELP_TEXT.get_rect(center=(LARGURA_TELA // 2, 260))
+
+            self.screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
+            self.screen.blit(SIZE_TEXT, SIZE_RECT)
+            self.screen.blit(HELP_TEXT, HELP_RECT)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        tamanho_lab += 1
+                    elif event.key == pygame.K_DOWN and tamanho_lab > TAMANHO_LAB: 
+                        # Tamanho padrão -> 6, aparentemente, tamanho = 4 trava o jogo. E tamanho = 5 funciona normalmente.
+                        tamanho_lab -= 1
+                    elif event.key == pygame.K_ESCAPE or event.key == pygame.K_RETURN: # TECLA ESC ou ENTER
+                        running = False
+                        break
+
+            pygame.display.flip()
+            clock.tick(30)
+
+        return tamanho_lab
 
 index = Index()
 index.iniciar(True)

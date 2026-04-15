@@ -1,40 +1,41 @@
 # Example file showing a basic pygame "game loop"
-import os
+import os, pygame
 
-import pygame
 from button import Button
 from cons import *
 from labirinto import Labirinto
 from agente import Agente
 
 class Main:
-    def __init__(self):
+    def __init__(self, tamanho_lab=TAMANHO_LAB):
         pygame.init()
+        self.tamanho_lab = tamanho_lab
+        
         # Janela de tamanho fixo
-
         self.tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
         self.tela.fill(PRINCIPAL_COLOR)
         pygame.display.set_caption("World of Wumpus")
         self.clock = pygame.time.Clock()
-        self.labirinto = Labirinto()
+        
+        self.labirinto = Labirinto(self.tamanho_lab) # TAMANHO_LAB = 6 PADRÃO
         self.agente = Agente(1, self.labirinto)
         #pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
         self.fonte = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)
         self.acao = False
 
-        self.rodando = True
-        self.pause = False # Variável para controlar a pausa do jogo.
-
         img_btn_central = pygame.image.load(os.path.join(DIR_PATH, "pause.png")).convert_alpha()
         #img_btn_central.fill((255, 255, 255))
-
         self.botao_central = Button(
             image=img_btn_central.copy(), 
             pos=((LARGURA_TELA)//2, ALTURA_BARRA // 2)
         )
+        # Para funcionamento correta da tela de execução e de pausa
+        self.rodando = True
+        self.pause = False # Variável para controlar a pausa do jogo.
 
-    # def 
-
+    """
+    Método que desenha a barra de status na tela de execução
+    """
     def desenhar_barra(self):
         pygame.draw.rect(self.tela, PRINCIPAL_COLOR, (0, 0, LARGURA_TELA, ALTURA_BARRA))
         
@@ -71,6 +72,9 @@ class Main:
         
         self.tela.blit(texto_pontos, text_rect)
 
+    """
+    Método que desenha a tela de execução do jogo
+    """
     def executar(self, player_x, player_y, ativar_agente=False):
         # Alteração: uso da posição como sendo tupla substituído para lista
         # isso otimiza o código e dispensa necessidade de repetição de uma dimensão
@@ -102,7 +106,6 @@ class Main:
                         self.rodando = False
                         self.endgame("Jogo parado")
                         # Exemplo: Fechar o jogo e voltar para o Menu Principal
-                        # self.rodando = False 
 
                 if evento.type == pygame.KEYDOWN and not self.ativa_agente:
 
@@ -112,7 +115,7 @@ class Main:
                         # player_y substitui posicao_inicial[1]
                         print(self.player_y)
                         if self.direcao == "direita":
-                            if self.player_y < TAMANHO_LAB-1:
+                            if self.player_y < self.tamanho_lab-1:
                                 self.player_y += 1
                         else:
                             self.direcao = "direita"
@@ -131,7 +134,7 @@ class Main:
                         # player_x substitui posicao_inicial[0]
                         print(self.player_x)
                         if self.direcao == "frente":
-                            if self.player_x < TAMANHO_LAB-1:
+                            if self.player_x < self.tamanho_lab-1:
                                 self.player_x += 1
                         else:
                             self.direcao = "frente"
@@ -162,14 +165,13 @@ class Main:
             self.desenhar_barra()
             
             pygame.display.flip()
-            self.clock.tick(5)
+            self.clock.tick(10)
 
         #pygame.quit()
 
-# index = Main()
-# index.executar(0, 0)
-
-    # Variável texto pode ser uma string, contendo as situações que levaram o agente a fim de jogo:
+    """
+    Método que desenha a tela de fim de jogo/de pausa
+    """
     #   - Agente venceu! (Matou o Wumpus (+500) e pegou o Ouro (+1000))
     #   - O agente morreu (caiu num buraco)
     #   - O agente morreu (wumpus o matou)
@@ -178,7 +180,7 @@ class Main:
     def endgame(self, texto):
 
         fundo_pausado = self.tela.copy()
-        self.tela.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
+        # self.tela.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
 
         pelicula = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
         pelicula.set_alpha(170) # Nível de escurecimento (0 a 255)
@@ -192,7 +194,7 @@ class Main:
         # -(59 + 100 + 59 - 35)
         img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
 
-        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="PLAY", font=FONT, base_color="#d7fcd4", hovering_color="White")
+        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="RETORNAR", font=FONT, base_color="#d7fcd4", hovering_color="White")
         QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
 
         rodando = True
@@ -214,7 +216,6 @@ class Main:
                     rodando = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        print("Play")
                         # Incrementar dificuldade, caso o jogador tenha GANHADO o jogo e não pausado.
                         # Voltar ao jogo, caso o jogador tenha PARADO o jogo
                         if (self.pause == True):
@@ -224,8 +225,5 @@ class Main:
                             rodando = False
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         rodando = False
-                
+
             pygame.display.flip()
-        
-        # pygame.quit()
-        # Se o jogador vencer, incrementar 1 na variável de TAMANHO DO LABAIRINTO 7x7 -> 8x8, etc 
