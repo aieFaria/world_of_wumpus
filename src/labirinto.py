@@ -45,8 +45,6 @@ class Labirinto:
     # Modificação: player_xy -> player_x, player_y
     def desenhar(self, tela, player_x, player_y, direcao, acao, offset_y, largura_janela, altura_janela):
 
-        
-
         linhas, colunas = self.blocos.shape
         
         tamanho_original = 87 # Define o tamanho original para adequação a redução de escala
@@ -99,7 +97,11 @@ class Labirinto:
                         #print(self.olhandoWumpus)
                         if( self.olhando_para_Wumpus(player_x, player_y, direcao) ): #Verifica se está virado para o Wumpus
                             # Se for modificar para indicar que wumpus está morto faça aqui dentro
-                            self.pontuacao += 1000
+                            print("olhando para o perigo")
+                            if(self.matarWumpus(player_x, player_y, direcao)):
+                                self.pontuacao += 1000
+                            else:
+                                print("Wumpus morto ou não existe")
 
                     # Condicional para verificar se acabei de pisar no bloco
                     # Será verdadeiro por uma única iteração e as demais seram falsas
@@ -135,9 +137,10 @@ class Labirinto:
                     tela_virtual.blit(railsao, railsao.get_rect(center=rect.center))
                     
                     # Condicionais para definição da pontuação
-                    if ( bloco.hasWumpus and not (player_x, player_y) in self.visitadosLabirinto ):
+                    if ( bloco.hasWumpus == "vivo" and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao -= 1000
+                        print("Morreu") # Incrementar lógica/tela de morte
                         # Adicionar efeito sonoro, se houver, bem aqui!
                     
                     # Coleta automatica do ouro
@@ -155,6 +158,7 @@ class Labirinto:
                         # bloco.hasArrow = False
                         # Adicionar efeito sonoro, se houver, bem aqui!
 
+                    # Ativação dos morcegos
                     if ( bloco.hasBats and mudou_de_bloco ):
                         
                         # Sortear nova posição após oisar em morcegos
@@ -198,11 +202,11 @@ class Labirinto:
                 # 4 -> tem buraco?  | 5 -> tem wumpus?  | 6 -> tem morcegos?  | 7 -> tem flecha?  | 8 -> tem ouro?
                 if ( [linha, coluna] == [0, 1] ) or ( [linha, coluna] == [1, 0] ) or ( [linha, coluna] == [0, 0] ):
                     
-                    self.blocos[linha][coluna] = Bloco(linha, coluna, True, False, False, False, False, False)
+                    self.blocos[linha][coluna] = Bloco(linha, coluna, True, False, "", False, False, False)
 
                     if( [linha, coluna] == [0, 0] ): self.blocos[linha][coluna].caracteristica["casa"]
                 else:
-                    self.blocos[linha][coluna] = Bloco(linha, coluna, False, False, False, False, False, False)
+                    self.blocos[linha][coluna] = Bloco(linha, coluna, False, False, "", False, False, False)
 
         #  Tornar qtd de morcegos maior que 1, a depender do tamanho do labirinto.
         # limite_buracos = (self.blocos.__len__() * self.blocos.__len__()) // 10
@@ -238,21 +242,21 @@ class Labirinto:
                 backup_list.append([num_x, num_y])
                 #print(f"backup_list: {backup_list}")
             if (i < limite_buracos):
-                self.blocos[num_x][num_y].reconfigurar(False, True, False, False, False, False)
+                self.blocos[num_x][num_y].reconfigurar(False, True, "", False, False, False)
                 self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Breeze\n")
             elif (i < limite_wumpus):
-                self.blocos[num_x][num_y].reconfigurar(False, False, True, False, False, False)
+                self.blocos[num_x][num_y].reconfigurar(False, False, "vivo", False, False, False)
                 self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Stench\n")
             elif (i < limite_morcegos):
-                self.blocos[num_x][num_y].reconfigurar(False, False, False, True, False, False)
+                self.blocos[num_x][num_y].reconfigurar(False, False, "", True, False, False)
                 self.blocos[num_x][num_y].attributes = [] # Limpar atributos quando for buraco, morcego, ou wumpus
                 self.conf_blocos_adjacentes(num_x, num_y, "Flapping")
             elif (i < limite_arrow):
-                self.blocos[num_x][num_y].reconfigurar(False, False, False, False, True, False)
+                self.blocos[num_x][num_y].reconfigurar(False, False, "", False, True, False)
             elif (i < limite_gold):
-                self.blocos[num_x][num_y].reconfigurar(False, False, False, False, False, True)
+                self.blocos[num_x][num_y].reconfigurar(False, False, "", False, False, True)
             #print(f"{i} - número x: {num_x}")
             #print(f"{i} - número y: {num_y}")
 
@@ -311,5 +315,30 @@ class Labirinto:
         # Percorrer todos os efeitos sonoros e parar
         for efeitoSonoro in self.sons_lab.values():
             efeitoSonoro.stop()
+
+    def matarWumpus(self, x, y, direcao):
+        posicao_blocoX = -1
+        posicao_blocoY = -1
+
+        match direcao:
+            case "direita":
+                posicao_blocoX, posicao_blocoY = x, y + 1
+            case "esquerda":
+                posicao_blocoX, posicao_blocoY = x, y - 1
+            case "costas":
+                posicao_blocoX, posicao_blocoY = x - 1, y
+            case "frente":
+                posicao_blocoX, posicao_blocoY = x + 1, y
+            case _:
+                print("wft?")
+
+        bloco = self.blocos[posicao_blocoX][posicao_blocoY]
+
+        if(bloco.hasWumpus == "vivo"):
+            bloco.hasWumpus = "morto"
+            return True
+
+
+        return False
             
         

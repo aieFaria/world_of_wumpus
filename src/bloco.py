@@ -19,7 +19,7 @@ class Bloco:
         self.pos_Y = pos_Y
         self.visible = visible
         self.hasPit = pit
-        self.hasWumpus = wumpus
+        self.hasWumpus = wumpus # Trocando de verdadeiro e falso para "vivo" ou "morto", para false usar ""
         self.hasBats = bats
         self.hasArrow = arrow
         self.hasGold = gold
@@ -31,13 +31,14 @@ class Bloco:
         self.caracteristica = {
             "background": pygame.image.load(os.path.join(DIR_PATH, "background.png")).convert_alpha(),
             "buraco": pygame.image.load(os.path.join(DIR_PATH, "buraco.png")).convert_alpha(),
-            "wumpus": pygame.image.load(os.path.join(DIR_PATH, "wumpus.png")).convert_alpha(),
+            "wumpus": pygame.image.load(os.path.join(DIR_PATH, "wumpusVivo.png")).convert_alpha(),
             "morcego": pygame.image.load(os.path.join(DIR_PATH, "morcego.png")).convert_alpha(),
             "flecha": pygame.image.load(os.path.join(DIR_PATH, "flecha.png")).convert_alpha(),
             "ouro": pygame.image.load(os.path.join(DIR_PATH, "ouro.png")).convert_alpha(),
             "nevoa": pygame.image.load(os.path.join(DIR_PATH, "nevoa.png")).convert_alpha(),
             "arco": pygame.image.load(os.path.join(DIR_PATH, "arco.png")).convert_alpha(),
-            "casa": pygame.image.load(os.path.join(DIR_PATH, "home.png")).convert_alpha()
+            "casa": pygame.image.load(os.path.join(DIR_PATH, "home.png")).convert_alpha(),
+            "wumpusMorto": pygame.image.load(os.path.join(DIR_PATH, "wumpusMorto.png")).convert_alpha(),
         }
     
     # Método para visualização dos atributos do bloco
@@ -56,7 +57,7 @@ class Bloco:
         if (self.visible):
             bg = self.caracteristica["background"]
             if( self.hasPit ): bg = self.caracteristica["buraco"]
-            elif( self.hasWumpus ): bg = self.caracteristica["wumpus"]
+            elif( self.hasWumpus ): bg = self.caracteristica["wumpus" if self.hasWumpus == "vivo" else "wumpusMorto"]
             elif( self.hasBats ): bg = self.caracteristica["morcego"]
             elif( self.hasArrow ): bg = self.caracteristica["flecha"]
             elif( self.hasGold ): bg = self.caracteristica["ouro"]
