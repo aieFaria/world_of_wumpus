@@ -131,7 +131,7 @@ class Main:
                     # para direção correta
                     if evento.key == pygame.K_RIGHT:
                         # player_y substitui posicao_inicial[1]
-                        print(self.player_y)
+                        # print(self.player_y)
                         if self.direcao == "direita":
                             if self.player_y < self.tamanho_lab-1:
                                 self.player_y += 1
@@ -140,7 +140,7 @@ class Main:
                         break
 
                     elif evento.key == pygame.K_LEFT:
-                        print(self.player_y)
+                        # print(self.player_y)
                         if self.direcao == "esquerda":
                             if self.player_y > 0:
                                 self.player_y -= 1
@@ -150,7 +150,7 @@ class Main:
 
                     elif evento.key == pygame.K_DOWN:
                         # player_x substitui posicao_inicial[0]
-                        print(self.player_x)
+                        # print(self.player_x)
                         if self.direcao == "frente":
                             if self.player_x < self.tamanho_lab-1:
                                 self.player_x += 1
@@ -159,7 +159,7 @@ class Main:
                         break
 
                     elif evento.key == pygame.K_UP:
-                        print(self.player_x)
+                        # print(self.player_x)
                         if self.direcao == "costas":
                             if self.player_x > 0:
                                 self.player_x -= 1
@@ -178,7 +178,7 @@ class Main:
                 # if self.agente.finalizado:
                 #     print()
                         
-            self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, self.acao, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
+            self.player_x, self.player_y = self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, self.acao, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
             
             self.desenhar_barra()
             
