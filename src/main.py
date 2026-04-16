@@ -113,7 +113,8 @@ class Main:
 
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
-                    # FInalizar index
+                    # Finalizar index
+                    self.labirinto.aux_parar_sons()
                     self.rodando = False
 
                 # Captura do evento "Apertar no botão de pause"

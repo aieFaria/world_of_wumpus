@@ -22,9 +22,7 @@ class Labirinto:
         # Definição das quantidades de cada coisa no mapa: Configuração padrão Labirinto 6x6
         self.dic_quantidades = {"morcegos": 2, "ouro": 3, "wumpus": 2, "flecha": 2, "buracos": 4 }
 
-        self.esperando_morcego = False
-        self.tempo_morcego = 0
-        self.pos_morcego = (0, 0)
+        self.morcegos = {"espera": False, "tempo": 0, "posicao": (0, 0)}
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
@@ -61,21 +59,20 @@ class Labirinto:
         tela_virtual.fill(PRINCIPAL_COLOR)
 
         # Lógica de espera do Gemini
-        if self.esperando_morcego:
+        if self.morcegos["espera"]:
             # 1000 = 1 segundo de espera. Se quiser mais rápido/lento, altere este valor!
-            if pygame.time.get_ticks() - self.tempo_morcego >= 1000: 
+            if pygame.time.get_ticks() - self.morcegos["tempo"] >= 1000: 
                 player_x, player_y = 0, 0
                 self.vis = (-1, -1)
-                self.esperando_morcego = False
+                self.morcegos["espera"] = False
             else:
                 # Prende o jogador na posição atual do morcego enquanto o tempo passa
-                player_x, player_y = self.pos_morcego
+                player_x, player_y = self.morcegos["posicao"]
 
         mudou_de_bloco = False
         if (player_x, player_y) != self.vis:
             # Para todos os sons
-            self.sons_lab["bafo"].stop()
-            self.sons_lab["brisa"].stop()
+            self.aux_parar_sons()
             
             # Atualiza a visita e marca a flag para tocar som neste frame
             self.vis = (player_x, player_y)
@@ -116,11 +113,11 @@ class Labirinto:
                             self.sons_lab["brisa"].play(loops=-1)
 
                         # Lógica de espera do Gemini
-                        if bloco.hasBats and not self.esperando_morcego:
-                            print("Swoosh! Os morcegos te levaram!")
-                            self.esperando_morcego = True
-                            self.tempo_morcego = pygame.time.get_ticks()
-                            self.pos_morcego = (player_x, player_y)
+                        if bloco.hasBats and not self.morcegos["espera"]:
+                            # print("Swoosh! Os morcegos te levaram!")
+                            self.morcegos["espera"] = True
+                            self.morcegos["tempo"] = pygame.time.get_ticks()
+                            self.morcegos["posicao"] = (player_x, player_y)
                             
 
                 # Cria o bloco na tela virtual
@@ -155,7 +152,7 @@ class Labirinto:
                         self.qtd_flechas += 1 # Soma 1 na mochila do jogador
                         # print("flechas: ", self.qtd_flechas)
                         self.hasArrow = True # Indica que o jogador tem flecha
-                        #bloco.hasArrow = False
+                        # bloco.hasArrow = False
                         # Adicionar efeito sonoro, se houver, bem aqui!
 
                     if ( bloco.hasBats and mudou_de_bloco ):
@@ -164,6 +161,10 @@ class Labirinto:
                         player_x = 0
                         player_y = 0
                         # print("teleport")
+
+                    if ( bloco.hasPit and mudou_de_bloco ): 
+                        # Insesir chamada da tela de morte
+                        print("Caiu e morreu")
 
         pygame.draw.rect(tela_virtual, (0, 0, 0), tela_virtual.get_rect(), 6)
 
@@ -305,5 +306,10 @@ class Labirinto:
         if( (x, y, direcao) in self.olhandoWumpus ):
             return True
         return False
+
+    def aux_parar_sons(self):
+        # Percorrer todos os efeitos sonoros e parar
+        for efeitoSonoro in self.sons_lab.values():
+            efeitoSonoro.stop()
             
         
