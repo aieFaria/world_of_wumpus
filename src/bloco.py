@@ -38,7 +38,7 @@ class Bloco:
             "nevoa": pygame.image.load(os.path.join(DIR_PATH, "nevoa.png")).convert_alpha(),
             "arco": pygame.image.load(os.path.join(DIR_PATH, "arco.png")).convert_alpha(),
             "casa": pygame.image.load(os.path.join(DIR_PATH, "home.png")).convert_alpha(),
-            "wumpusMorto": pygame.image.load(os.path.join(DIR_PATH, "wumpusMorto.png")).convert_alpha(),
+            "wumpusMorto": pygame.image.load(os.path.join(DIR_PATH, "wumpusMorto.png")).convert_alpha()
         }
     
     # Método para visualização dos atributos do bloco

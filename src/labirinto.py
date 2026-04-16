@@ -196,6 +196,17 @@ class Labirinto:
 
         return player_x, player_y # Retorna posição em caso de alteração pelos morcegos
 
+        """
+        # Retorno do dicionario referente as informações atuais do bloco
+        # a ideia é servir de processamento para o agente utilizar, ou mostrar no console
+        blocoR = self.blocos[player_x][player_y]
+        dic = {"bloco": (player_x, player_y), 
+               "atributos": blocoR.attributes,
+               # Pode modificar caso necessário: caracteriscas indicam se possui flecha, wumpus, ouro, etc.
+               "caracteristicas": {"hasArrow": blocoR.hasArrow, "hasPit": blocoR.hasPit, "hasWumpus": blocoR.hasWumpus, "hasGold": blocoR.hasGold, "hasBats": blocoR.hasBats}}
+        return dic
+        """
+
                     
     # Modificar a função "def gerar_labirinto(self, tamanho_labirinto)". "tamanho_labirinto" será um par ordernado (linha, coluna)
     # Tamanho padrão, aumentando a cada vitória ou definido pelo usuário.
