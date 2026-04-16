@@ -103,6 +103,11 @@ class Labirinto:
                             else:
                                 print("Wumpus morto ou não existe")
 
+                    # Condicional para verificar se deseja sair do Labirinto
+                    if( (0, 0) == (player_x, player_y) and acao):
+                        # Inserir lógica de fim de jogo (endgame)
+                        print("saiu do labirinto")
+
                     # Condicional para verificar se acabei de pisar no bloco
                     # Será verdadeiro por uma única iteração e as demais seram falsas
                     # ou seja, o som dará "play" apenas uma vez
@@ -140,7 +145,7 @@ class Labirinto:
                     if ( bloco.hasWumpus == "vivo" and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao -= 1000
-                        print("Morreu") # Incrementar lógica/tela de morte
+                        print("Morreu") # Incrementar lógica/tela de fim de jogo (endgame)
                         # Adicionar efeito sonoro, se houver, bem aqui!
                     
                     # Coleta automatica do ouro
@@ -167,7 +172,7 @@ class Labirinto:
                         # print("teleport")
 
                     if ( bloco.hasPit and mudou_de_bloco ): 
-                        # Insesir chamada da tela de morte
+                        # Insesir chamada da tela de fim de jogo (endgame)
                         print("Caiu e morreu")
 
         pygame.draw.rect(tela_virtual, (0, 0, 0), tela_virtual.get_rect(), 6)
