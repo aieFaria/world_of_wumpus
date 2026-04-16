@@ -21,7 +21,7 @@ class Main:
         self.agente = Agente(1, self.labirinto)
         #pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
         self.fonte = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)
-        self.acao = False
+        self.acao = False      
 
         img_btn_central = pygame.image.load(os.path.join(DIR_PATH, "pause.png")).convert_alpha()
         #img_btn_central.fill((255, 255, 255))
@@ -54,6 +54,24 @@ class Main:
             if( self.labirinto.hasArrow ):
                 img_arco = self.labirinto.bloco.caracteristica["arco"]
                 self.tela.blit(img_arco, (x_slot + 5, y_slot + 5))
+
+                self.fonte_pequena = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 10)
+
+                base_x = x_slot + tamanho_slot - 2
+                base_y = y_slot + tamanho_slot - 2
+                
+                # Geração de contorno, gera um texto branco
+                texto_contorno = self.fonte_pequena.render( "x" + str(self.labirinto.qtd_flechas) 
+                                                           , True, (255, 255, 255))
+                offsets = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+                for ox, oy in offsets:
+                    self.tela.blit(texto_contorno, 
+                                   texto_contorno.get_rect(bottomright=(base_x + ox, base_y + oy)))
+
+                # Passo final colocar texto preto por cima do branco
+                texto_qtd = self.fonte_pequena.render("x" + str(self.labirinto.qtd_flechas)
+                                                      , True, (0, 0, 0))
+                self.tela.blit(texto_qtd, texto_qtd.get_rect(bottomright=(base_x, base_y)))
 #           img_arco, img_arco.get_rect(center=rect.center)
         
         # Exemplo de bloco centralizado

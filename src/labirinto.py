@@ -14,6 +14,7 @@ class Labirinto:
         self.tamanho_quadrado = TAMANHO_QUADRADO // tamanho_lab
         self.blocos = np.zeros((tamanho_lab, tamanho_lab), dtype=object) # Tamanho do labirinto, quantidade de quadrados
         self.visitadosLabirinto = set()
+        self.vis = (-1, -1) # Variavel de controle para saber se acabou de pisar no bloco
         self.pontuacao = 0
         self.hasArrow = False # Indica se o jogador possui a flecha
         self.qtd_flechas = 0 
@@ -31,7 +32,7 @@ class Labirinto:
 
         self.sons_lab = {
             "bafo": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "bafoDeBosta.mp3")),
-            # "brisa": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "brisa.mp3"))
+            "brisa": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "brisa.mp3"))
         }
 
         # Geração do labirinto ao iniciar, serve para acessar os blocos apenas quando for necessário
@@ -52,6 +53,16 @@ class Labirinto:
         # Cria uma tela virtual com o tamanho perfeito original
         tela_virtual = pygame.Surface((largura_virtual, altura_virtual))
         tela_virtual.fill(PRINCIPAL_COLOR)
+
+        mudou_de_bloco = False
+        if (player_x, player_y) != self.vis:
+            # Para todos os sons
+            self.sons_lab["bafo"].stop()
+            self.sons_lab["brisa"].stop()
+            
+            # Atualiza a visita e marca a flag para tocar som neste frame
+            self.vis = (player_x, player_y)
+            mudou_de_bloco = True
 
         # Alteração: Considerando tamanho da matriz para os laços de repetição
         for linha in range(self.blocos.__len__()):
@@ -75,7 +86,18 @@ class Labirinto:
                         if( self.olhando_para_Wumpus(player_x, player_y, direcao) ): #Verifica se está virado para o Wumpus
                             # Se for modificar para indicar que wumpus está morto faça aqui dentro
                             self.pontuacao += 1000
-                
+
+                    # Condicional para verificar se acabei de pisar no bloco
+                    # Será verdadeiro por uma única iteração e as demais seram falsas
+                    # ou seja, o som dará "play" apenas uma vez
+                    if mudou_de_bloco:
+                        if 'Stench\n' in bloco.attributes:
+                            self.sons_lab["bafo"].play() # Toca apenas uma vez
+                        if 'Breeze\n' in bloco.attributes:
+                            # A flag "loops=-1" indica que o som será tocado indefinidamente até que o 
+                            # método "stop()" seja chamado
+                            self.sons_lab["brisa"].play(loops=-1) 
+
                 # Cria o bloco na tela virtual
                 rect = bloco.criar(linha, coluna, tela_virtual)
 
@@ -122,12 +144,10 @@ class Labirinto:
                     #     pygame.mixer.Sound.stop()
                     # if ( 'Breeze\n' in bloco.attributes ):
                     #     self.visitadosLabirinto.add((player_x, player_y))
-                    #     som_pulo = self.sons_lab["brisa"]
-                    #     som_pulo.play()
-                    if ( 'Stench\n' in bloco.attributes and not (player_x, player_y) in self.visitadosLabirinto):
-                        self.visitadosLabirinto.add((player_x, player_y))
-                        som_pulo = self.sons_lab["bafo"]
-                        som_pulo.play()
+                    #     efeito_sonoro = self.sons_lab["brisa"]
+                    #     efeito_sonoro.play()
+                    # if ( 'Stench\n' in bloco.attributes and not (player_x, player_y) in self.visitadosLabirinto):
+                    #     self.visitadosLabirinto.add((player_x, player_y))
 
         pygame.draw.rect(tela_virtual, (0, 0, 0), tela_virtual.get_rect(), 6)
 

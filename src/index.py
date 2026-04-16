@@ -5,6 +5,9 @@ from main import Main
 
 class Index:
     def __init__(self):
+        # Forma de centralizar tela independentemente da navegação entre as telas
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
+
         pygame.init()
 
         self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA2))
@@ -38,6 +41,8 @@ class Index:
             PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 200), text_input="PLAY", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
             OPTIONS_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 300), text_input="OPTIONS", font=self.get_font(29), base_color="#d7fcd4", hovering_color="White")
             QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, 400), text_input="QUIT", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            # Falta configurar o botão de como jogar
+            HELP_BUTTON = Button(None, pos=(80, ALTURA_TELA2-30), text_input="Como jogar?", font=self.get_font(10), base_color="#ff7e7e", hovering_color="White")
 
             self.screen.blit(MENU_TEXT, MENU_RECT)
             self.screen.blit(SIZE_TEXT, SIZE_RECT)
@@ -49,7 +54,7 @@ class Index:
                 OFF_BUTTON.changeColor(MENU_MOUSE_POS)
                 OFF_BUTTON.update(self.screen)
             
-            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
+            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON, HELP_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
                 button.update(self.screen)
 
@@ -73,8 +78,13 @@ class Index:
 
                     if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                         self.tamanho_lab = self.show_options()
-                        self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA2))
+                        # self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA2))
+                        # Removido para evitar da janela descer sempre que fechar as opções
                         pygame.display.set_caption("World of Wumpus")
+
+                    if HELP_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        # definir o que vai acontecer quando clicar em "Como jogar?"
+                        print("Como jogar?")
 
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         running = False
@@ -93,15 +103,16 @@ class Index:
 
         OPTIONS_TEXT = self.get_font(40).render("OPTIONS", True, "White")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(LARGURA_TELA // 2, 80))
-        SIZE_TEXT = self.get_font(30).render(f"Tamanho: {tamanho_lab}x{tamanho_lab}", True, "White")
-        SIZE_RECT = SIZE_TEXT.get_rect(center=(LARGURA_TELA // 2, 180))
-        HELP_TEXT = self.get_font(20).render("↑/↓ mudar tamanho\n\n ENTER salvar\n\n ESC voltar", True, "White")
-        HELP_RECT = HELP_TEXT.get_rect(center=(LARGURA_TELA // 2, 260))
+        HELP_TEXT = self.get_font(12).render("↑/↓ mudar tamanho\n\n ENTER salvar\n\n ESC voltar", True, "White")
+        HELP_RECT = HELP_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA2 - 50))
 
         while running:
             # self.screen.fill(PRINCIPAL_COLOR)
             self.screen.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
 
+            # Alterado a posição de declaração para atualizar sempre que clicar nas setinhas
+            SIZE_TEXT = self.get_font(30).render(f"Tamanho: {tamanho_lab}x{tamanho_lab}", True, "White")
+            SIZE_RECT = SIZE_TEXT.get_rect(center=(LARGURA_TELA // 2, 180))
             # TECLA ENTER E ESC voltam e salvam, ambas
             
             self.screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
@@ -113,10 +124,12 @@ class Index:
                     running = False
                     break
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP:
+                    # Definindo limite superior para 20x20 que testei e funciona corretamente
+                    if event.key == pygame.K_UP and tamanho_lab < 20:
                         tamanho_lab += 1
                     elif event.key == pygame.K_DOWN and tamanho_lab > TAMANHO_LAB: 
                         # Tamanho padrão -> 6, aparentemente, tamanho = 4 trava o jogo. E tamanho = 5 funciona normalmente.
+                        # e tamanho = 40 também trava o jogo
                         tamanho_lab -= 1
                     elif event.key == pygame.K_ESCAPE or event.key == pygame.K_RETURN: # TECLA ESC ou ENTER
                         running = False
