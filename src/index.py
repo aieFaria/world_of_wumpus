@@ -91,18 +91,19 @@ class Index:
         clock = pygame.time.Clock()
         running = True
 
+        OPTIONS_TEXT = self.get_font(40).render("OPTIONS", True, "White")
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(LARGURA_TELA // 2, 80))
+        SIZE_TEXT = self.get_font(30).render(f"Tamanho: {tamanho_lab}x{tamanho_lab}", True, "White")
+        SIZE_RECT = SIZE_TEXT.get_rect(center=(LARGURA_TELA // 2, 180))
+        HELP_TEXT = self.get_font(20).render("↑/↓ mudar tamanho\n\n ENTER salvar\n\n ESC voltar", True, "White")
+        HELP_RECT = HELP_TEXT.get_rect(center=(LARGURA_TELA // 2, 260))
+
         while running:
             # self.screen.fill(PRINCIPAL_COLOR)
             self.screen.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
 
-            OPTIONS_TEXT = self.get_font(40).render("OPTIONS", True, "White")
-            OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(LARGURA_TELA // 2, 80))
-            SIZE_TEXT = self.get_font(30).render(f"Tamanho: {tamanho_lab}x{tamanho_lab}", True, "White")
-            SIZE_RECT = SIZE_TEXT.get_rect(center=(LARGURA_TELA // 2, 180))
             # TECLA ENTER E ESC voltam e salvam, ambas
-            HELP_TEXT = self.get_font(20).render("↑/↓ mudar tamanho\n\n ENTER salvar\n\n ESC voltar", True, "White")
-            HELP_RECT = HELP_TEXT.get_rect(center=(LARGURA_TELA // 2, 260))
-
+            
             self.screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
             self.screen.blit(SIZE_TEXT, SIZE_RECT)
             self.screen.blit(HELP_TEXT, HELP_RECT)

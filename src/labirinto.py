@@ -214,9 +214,6 @@ class Labirinto:
                 self.blocos[num_x][num_y].reconfigurar(False, False, False, False, True, False)
             elif (i < limite_gold):
                 self.blocos[num_x][num_y].reconfigurar(False, False, False, False, False, True)
-            
-            
-
             #print(f"{i} - número x: {num_x}")
             #print(f"{i} - número y: {num_y}")
 

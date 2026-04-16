@@ -104,7 +104,7 @@ class Main:
                         print("Botão central clicado!")
                         self.pause = True
                         self.rodando = False
-                        self.endgame("Jogo parado")
+                        self.paused()
                         # Exemplo: Fechar o jogo e voltar para o Menu Principal
 
                 if evento.type == pygame.KEYDOWN and not self.ativa_agente:
@@ -170,14 +170,9 @@ class Main:
         #pygame.quit()
 
     """
-    Método que desenha a tela de fim de jogo/de pausa
+    Método que desenha a tela de pausa
     """
-    #   - Agente venceu! (Matou o Wumpus (+500) e pegou o Ouro (+1000))
-    #   - O agente morreu (caiu num buraco)
-    #   - O agente morreu (wumpus o matou)
-    #   - Morcegos te jogaram em (...)
-    #   - Se o agente não pegar o ouro, não pode sair da caverna/labirinto
-    def endgame(self, texto):
+    def paused(self):
 
         fundo_pausado = self.tela.copy()
         # self.tela.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
@@ -188,13 +183,13 @@ class Main:
 
         # Carregando constantes apenas uma vez
         FONT = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
-        ENDGAME_TEXT = FONT.render(f"{texto}", True, "White")
-        ENDGAME_RECT = ENDGAME_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2 - 59*2 +50)) # 
+        PAUSED_TEXT = FONT.render("Jogo pausado", True, "White")
+        PAUSED_RECT = PAUSED_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2 - 59*2 +50)) # 
         # 59 PIXELS
         # -(59 + 100 + 59 - 35)
         img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
 
-        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="RETORNAR", font=FONT, base_color="#d7fcd4", hovering_color="White")
+        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="BACK", font=FONT, base_color="#d7fcd4", hovering_color="White")
         QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
 
         rodando = True
@@ -205,7 +200,7 @@ class Main:
             self.tela.blit(fundo_pausado, (0, 0))
             self.tela.blit(pelicula, (0, 0))
             
-            self.tela.blit(ENDGAME_TEXT, ENDGAME_RECT)
+            self.tela.blit(PAUSED_TEXT, PAUSED_RECT)
 
             for button in [PLAY_BUTTON, QUIT_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
@@ -219,10 +214,56 @@ class Main:
                         # Incrementar dificuldade, caso o jogador tenha GANHADO o jogo e não pausado.
                         # Voltar ao jogo, caso o jogador tenha PARADO o jogo
                         if (self.pause == True):
-                            print("ENTROU NO PAUSE")
                             self.pause = False
                             self.rodando = True
                             rodando = False
+                    if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        rodando = False
+
+            pygame.display.flip()
+
+        
+    #   - Agente venceu! (Matou o Wumpus (+500) e pegou o Ouro (+1000))
+    #   - O agente morreu (caiu num buraco)
+    #   - O agente morreu (wumpus o matou)
+    #   - Morcegos te jogaram em (...)
+    # Se o agente não pegar o ouro, não pode sair da caverna/labirinto
+    """
+    ...
+    """
+    def endgame(self, texto):
+        # fundo_pausado = self.tela.copy()
+
+        # pelicula = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
+        # pelicula.set_alpha(170) # Nível de escurecimento (0 a 255)
+        # pelicula.fill((0, 0, 0)) 
+
+        # Carregando constantes apenas uma vez
+        FONT = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
+        ENDGAME_TEXT = FONT.render(f"{texto}", True, "White")
+        ENDGAME_RECT = ENDGAME_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2 - 59*2 +50)) # 
+        # 59 PIXELS
+        # -(59 + 100 + 59 - 35)
+        img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
+
+        # PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="RETORNAR", font=FONT, base_color="#d7fcd4", hovering_color="White")
+        QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
+
+        rodando = True
+        while rodando:
+            self.screen.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            self.tela.blit(ENDGAME_TEXT, ENDGAME_RECT)
+
+            for button in [QUIT_BUTTON]:
+                button.changeColor(MENU_MOUSE_POS)
+                button.update(self.tela)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    rodando = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         rodando = False
 
