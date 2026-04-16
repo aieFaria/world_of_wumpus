@@ -26,9 +26,29 @@ Como gerar executavel:
 (Linux) Permitir a execução do arquivo gerado
 > chmod +x dist/<nome do script>
 
-
 Biblioteca para geração da matriz
 > pip install numpy
+
+## Etapas a serem desenvolvidas
+
+- [✔️] Tela inicial (tamanho do jogo, qtd de bichos?)
+- [✔️] Tela de opções
+- [🔘] Tela de fim de jogo
+- [✔️]  Lançar flecha, apertando botão "Enter"
+- [✔️] Coletar ouro
+- [❌] Matar Wumbus
+- [❌] Verificar regras para sair do labirinto, e adequar o código a essas regras
+- [❌] Cair no buraco e morrer
+- [❌] Teletransporte do morcego
+- [🔘] Melhorar imagens
+- [🔘] Corrigir áudios ao pisar no bloco
+- [🔘] Colocar a saída no bloco [0,0]. E para interagir com a saída aperta o botão "Enter"
+
+✔️ - Feito
+
+🔘 - Em andamento
+
+❌ - Não iniciado
 
 ## 📦 Disposição do programa
      .
