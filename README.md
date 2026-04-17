@@ -94,5 +94,9 @@ clock = pygame.time.Clock()
 # Outros
 * Se possível, tirar imagens do github *
 * Buracos podem ser substituídos por Stench
-* Ilustração da razão de não termos proibido a criação de buracos nas posições ()
+* Ilustração da razão de termos proibido a criação de buracos nas posições ()
 <img width="1208" height="564" alt="image" src="https://github.com/user-attachments/assets/8d9b46af-4c43-4904-af0b-713c5f827151" />
+
+<img width="1524" height="728" alt="image" src="https://github.com/user-attachments/assets/49543f2a-d1de-4dd3-accb-1b78e192caaa" />
+<img width="724" height="728" alt="image" src="https://github.com/user-attachments/assets/cfcc50da-dd11-41a1-9ea8-f8da8bebdcc2" />
+
