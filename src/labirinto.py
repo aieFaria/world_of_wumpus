@@ -34,7 +34,8 @@ class Labirinto:
 
         self.sons_lab = {
             "bafo": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "bafoDeBosta.mp3")),
-            "brisa": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "brisa.mp3"))
+            "brisa": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "brisa.mp3")),
+            "morcegos": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "flapping.mp3"))
         }
 
         # Geração do labirinto ao iniciar, serve para acessar os blocos apenas quando for necessário
@@ -113,10 +114,16 @@ class Labirinto:
                     # ou seja, o som dará "play" apenas uma vez
                     if mudou_de_bloco:
                         if 'Stench\n' in bloco.attributes:
+                            # self.sons_lab["bafo"].set_volume(1)
                             self.sons_lab["bafo"].play() # Toca apenas uma vez
+
+                        if 'Flapping' in bloco.attributes:
+                            self.sons_lab["morcegos"].play(loops=-1)
+                            
                         if 'Breeze\n' in bloco.attributes:
                             # A flag "loops=-1" indica que o som será tocado indefinidamente até que o 
                             # método "stop()" seja chamado
+                            # self.sons_lab["brisa"].set_volume(0.1)
                             self.sons_lab["brisa"].play(loops=-1)
 
                         # Lógica de espera do Gemini
