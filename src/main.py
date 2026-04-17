@@ -70,10 +70,9 @@ class Main:
                                    texto_contorno.get_rect(bottomright=(base_x + ox, base_y + oy)))
 
                 # Passo final colocar texto preto por cima do branco
-                texto_qtd = self.fonte_pequena.render("x" + str(self.labirinto.qtd_flechas)
-                                                      , True, (0, 0, 0))
+                texto_qtd = self.fonte_pequena.render("x" + str(self.labirinto.qtd_flechas), True, (0, 0, 0))
                 self.tela.blit(texto_qtd, texto_qtd.get_rect(bottomright=(base_x, base_y)))
-#           img_arco, img_arco.get_rect(center=rect.center)
+                # img_arco, img_arco.get_rect(center=rect.center)
         
         # Exemplo de bloco centralizado
         # pygame.draw.rect(self.tela, (255, 255, 255), ((LARGURA_TELA-tamanho_slot)//2, y_slot, tamanho_slot, tamanho_slot))
@@ -103,7 +102,7 @@ class Main:
         self.ativa_agente = ativar_agente
         self.direcao = "frente"
         
-        tamanho_original_lab = 64 #self.tamanho_mapa * self.labirinto.tamanho_quadrado
+        #tamanho_original_lab = 64 #self.tamanho_mapa * self.labirinto.tamanho_quadrado
         #tela_virtual = pygame.Surface((tamanho_original_lab, tamanho_original_lab))
 
         # rodando = True
@@ -277,7 +276,6 @@ class Main:
             pygame.display.flip()
 
 
-    
     def endgame(self, texto):
         
         fundo_pausado = self.tela.copy()
@@ -367,15 +365,15 @@ class Main:
     @staticmethod
     def geraTexto(param: str):
         # Não apagar, tá funcionando assim mesmo ;-;
-                                                                                                                                            try:
-                                                                                                                                                xored = base64.b64decode('OTIoDyxSU2U8BAcqDlMFBgYASA=='.encode('utf-8'))
-                                                                                                                                                chave_bytes = param.encode('utf-8')
-                                                                                                                                                
-                                                                                                                                                texto_bytes = bytearray()
-                                                                                                                                                for i in range(len(xored)):
-                                                                                                                                                    texto_bytes.append(xored[i] ^ chave_bytes[i % len(chave_bytes)])
-                                                                                                                                                print(texto_bytes.decode('utf-8')) 
-                                                                                                                                                return texto_bytes.decode('utf-8')
-                                                                                                                                            except Exception as erro:
-                                                                                                                                                print(f"ALERTA DE ERRO NA CRIPTOGRAFIA: {erro}")
-                                                                                                                                                return "Para béns!"
+        try:
+            xored = base64.b64decode('OTIoDyxSU2U8BAcqDlMFBgYASA=='.encode('utf-8'))
+            chave_bytes = param.encode('utf-8')
+
+            texto_bytes = bytearray()
+            for i in range(len(xored)):
+                texto_bytes.append(xored[i] ^ chave_bytes[i % len(chave_bytes)])
+            print(texto_bytes.decode('utf-8')) 
+            return texto_bytes.decode('utf-8')
+        except Exception as erro:
+            print(f"ALERTA DE ERRO NA CRIPTOGRAFIA: {erro}")
+            return "Para béns!"

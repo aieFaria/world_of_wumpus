@@ -63,11 +63,17 @@ class Labirinto:
         # Lógica de espera do Gemini
         if self.morcegos["espera"]:
             # 1000 = 1 segundo de espera. Se quiser mais rápido/lento, altere este valor!
-            if pygame.time.get_ticks() - self.morcegos["tempo"] >= 1000: 
-                player_x, player_y = 0, 0
+            if pygame.time.get_ticks() - self.morcegos["tempo"] >= 1000:
+                num_x = random.randint(0, self.tamanho_lab-1)
+                num_y = random.randint(0, self.tamanho_lab-1)
+                # Gerados dois números aleatórios entre 0 e o tamanho do labirinto - 1
+                # Desta forma, o morcego leva o jogador a qualquer sala aleatória.
+                player_x, player_y = num_x, num_y
+
                 self.vis = (-1, -1)
                 self.morcegos["espera"] = False
             else:
+                # self.morcegos["posicao"] = (0, 1)
                 # Prende o jogador na posição atual do morcego enquanto o tempo passa
                 player_x, player_y = self.morcegos["posicao"]
 
@@ -136,7 +142,6 @@ class Labirinto:
                             self.morcegos["espera"] = True
                             self.morcegos["tempo"] = pygame.time.get_ticks()
                             self.morcegos["posicao"] = (player_x, player_y)
-                            
 
                 # Cria o bloco na tela virtual
                 rect = bloco.criar(linha, coluna, tela_virtual)
@@ -265,12 +270,12 @@ class Labirinto:
 
             # Verificar caso em que números aleatórios iguais são gerados (bem raro, imagino)
             if (self.verificar_num_aleatorios(num_x, num_y, backup_list)):
+                # É possível que o número gerado seja igual novamente
+                # Ou caia em uma posição inicial: (0,0), (0,1), (1,0) ou (1,1)
                 while (self.verificar_num_aleatorios(num_x, num_y, backup_list)):
                     num_x = random.randint(0, self.tamanho_lab-1)
                     num_y = random.randint(0, self.tamanho_lab-1)
-                # É possível que o número gerado seja igual novamente
-                # Ou caia em uma posição inicial: (0,0), (0,1), (1,0) ou (1,1)
-                # Solução: utilizar o While
+
                 backup_list.append([num_x, num_y])
             else:
                 backup_list.append([num_x, num_y])
@@ -291,8 +296,6 @@ class Labirinto:
                 self.blocos[num_x][num_y].reconfigurar(False, False, "", False, True, False)
             elif (i < limite_gold):
                 self.blocos[num_x][num_y].reconfigurar(False, False, "", False, False, True)
-            #print(f"{i} - número x: {num_x}")
-            #print(f"{i} - número y: {num_y}")
 
     # Verificar se os números aleatórios gerados são iguais, caso sejam, 
     # gerar novos números. Utiliza recursão, mas acredito que será bem raro de acontecer.
@@ -371,7 +374,6 @@ class Labirinto:
         if(bloco.hasWumpus == "vivo"):
             bloco.hasWumpus = "morto"
             return True
-
 
         return False
     

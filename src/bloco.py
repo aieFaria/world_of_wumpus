@@ -31,14 +31,14 @@ class Bloco:
         self.caracteristica = {
             "background": pygame.image.load(os.path.join(DIR_PATH, "background.png")).convert_alpha(),
             "buraco": pygame.image.load(os.path.join(DIR_PATH, "buraco.png")).convert_alpha(),
-            "wumpus": pygame.image.load(os.path.join(DIR_PATH, "wumpusVivo.png")).convert_alpha(),
+            "wumpus": pygame.image.load(os.path.join(DIR_PATH, "wumpusVivo2.png")).convert_alpha(),
             "morcego": pygame.image.load(os.path.join(DIR_PATH, "morcego.png")).convert_alpha(),
             "flecha": pygame.image.load(os.path.join(DIR_PATH, "flecha.png")).convert_alpha(),
             "ouro": pygame.image.load(os.path.join(DIR_PATH, "ouro.png")).convert_alpha(),
             "nevoa": pygame.image.load(os.path.join(DIR_PATH, "nevoa.png")).convert_alpha(),
             "arco": pygame.image.load(os.path.join(DIR_PATH, "arco.png")).convert_alpha(),
             "casa": pygame.image.load(os.path.join(DIR_PATH, "home.png")).convert_alpha(),
-            "wumpusMorto": pygame.image.load(os.path.join(DIR_PATH, "wumpusMorto.png")).convert_alpha()
+            "wumpusMorto": pygame.image.load(os.path.join(DIR_PATH, "wumpusMorto2.png")).convert_alpha()
         }
     
     # Método para visualização dos atributos do bloco
