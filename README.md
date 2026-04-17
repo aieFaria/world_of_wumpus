@@ -90,3 +90,9 @@ import numpy
 # Controle de clock
 clock = pygame.time.Clock()
 ```
+
+# Outros
+* Se possível, tirar imagens do github *
+* Buracos podem ser substituídos por Stench
+* Ilustração da razão de não termos proibido a criação de buracos nas posições ()
+<img width="1208" height="564" alt="image" src="https://github.com/user-attachments/assets/8d9b46af-4c43-4904-af0b-713c5f827151" />
