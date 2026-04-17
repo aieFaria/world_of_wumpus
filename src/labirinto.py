@@ -21,8 +21,8 @@ class Labirinto:
         self.olhandoWumpus = [] # array de tupla que contém as possibilidades de olhar para wumpus
         # Definição das quantidades de cada coisa no mapa: Configuração padrão Labirinto 6x6
         self.dic_quantidades = {"morcegos": 2, "ouro": 3, "wumpus": 2, "flecha": 2, "buracos": 4 }
-
         self.morcegos = {"espera": False, "tempo": 0, "posicao": (0, 0)}
+        self.jogador_status = 0 # Estados possiveis do jogador: 0 - vivo, 1 - perdeu, 2 - ganhou
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
@@ -56,6 +56,9 @@ class Labirinto:
         # Cria uma tela virtual com o tamanho perfeito original
         tela_virtual = pygame.Surface((largura_virtual, altura_virtual))
         tela_virtual.fill(PRINCIPAL_COLOR)
+
+        if( self.visualizarLabirintoFull() ):
+            print("Sucesso ao ver lab")
 
         # Lógica de espera do Gemini
         if self.morcegos["espera"]:
@@ -107,6 +110,7 @@ class Labirinto:
                     # Condicional para verificar se deseja sair do Labirinto
                     if( (0, 0) == (player_x, player_y) and acao):
                         # Inserir lógica de fim de jogo (endgame)
+                        self.jogador_status = 2
                         print("saiu do labirinto")
 
                     # Condicional para verificar se acabei de pisar no bloco
@@ -119,7 +123,7 @@ class Labirinto:
 
                         if 'Flapping' in bloco.attributes:
                             self.sons_lab["morcegos"].play(loops=-1)
-                            
+
                         if 'Breeze\n' in bloco.attributes:
                             # A flag "loops=-1" indica que o som será tocado indefinidamente até que o 
                             # método "stop()" seja chamado
@@ -152,8 +156,8 @@ class Labirinto:
                     if ( bloco.hasWumpus == "vivo" and not (player_x, player_y) in self.visitadosLabirinto ):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao -= 1000
+                        self.jogador_status = 1
                         print("Morreu") # Incrementar lógica/tela de fim de jogo (endgame)
-                        # Adicionar efeito sonoro, se houver, bem aqui!
                     
                     # Coleta automatica do ouro
                     if ( bloco.hasGold and not (player_x, player_y) in self.visitadosLabirinto):
@@ -178,6 +182,7 @@ class Labirinto:
 
                     if ( bloco.hasPit and mudou_de_bloco ): 
                         # Insesir chamada da tela de fim de jogo (endgame)
+                        self.jogador_status = 1
                         print("Caiu e morreu")
 
         pygame.draw.rect(tela_virtual, (0, 0, 0), tela_virtual.get_rect(), 6)
@@ -199,19 +204,27 @@ class Labirinto:
         
         tela.blit(labirinto_comprimido, (inicio_x, inicio_y))
 
-        return player_x, player_y # Retorna posição em caso de alteração pelos morcegos
+        #return player_x, player_y # Retorna posição em caso de alteração pelos morcegos
 
-        """
+        # """
         # Retorno do dicionario referente as informações atuais do bloco
         # a ideia é servir de processamento para o agente utilizar, ou mostrar no console
         blocoR = self.blocos[player_x][player_y]
         dic = {"bloco": (player_x, player_y), 
-               "atributos": blocoR.attributes,
+               "atributos": [item.strip() for item in blocoR.attributes],
                # Pode modificar caso necessário: caracteriscas indicam se possui flecha, wumpus, ouro, etc.
-               "caracteristicas": {"hasArrow": blocoR.hasArrow, "hasPit": blocoR.hasPit, "hasWumpus": blocoR.hasWumpus, "hasGold": blocoR.hasGold, "hasBats": blocoR.hasBats}}
-        return dic
-        """
+               "hasArrow": blocoR.hasArrow, 
+               "hasPit": blocoR.hasPit, 
+               "hasWumpus": blocoR.hasWumpus, 
+               "hasGold": blocoR.hasGold, 
+               "hasBats": blocoR.hasBats,
+               # Status se refere ao estado do jogador, se está vivo, se morreu, se ganhou
+               "status": self.jogador_status,
+               "pontuacao": self.pontuacao}
 
+
+        return dic
+        # """
                     
     # Modificar a função "def gerar_labirinto(self, tamanho_labirinto)". "tamanho_labirinto" será um par ordernado (linha, coluna)
     # Tamanho padrão, aumentando a cada vitória ou definido pelo usuário.
@@ -361,5 +374,14 @@ class Labirinto:
 
 
         return False
+    
+    def visualizarLabirintoFull(self):
+        if (self.jogador_status != 0):
+            for arrayBloco in self.blocos:
+                for bloco in arrayBloco:
+                    bloco.setVisible(param=True)
+            return True
+        else:
+            return False
             
         

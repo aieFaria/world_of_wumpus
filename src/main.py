@@ -1,4 +1,5 @@
 # Example file showing a basic pygame "game loop"
+import base64
 import os, pygame
 
 from button import Button
@@ -178,11 +179,45 @@ class Main:
                 self.agente.executar(self)
                 # if self.agente.finalizado:
                 #     print()
-                        
-            self.player_x, self.player_y = self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, self.acao, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
-            
+       
+            resposta = self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, self.acao, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
+            self.player_x, self.player_y = resposta.get("bloco", (-1, -1))
+
+            """
+            # Mostra no console o retorno do método desenhar:
+            # Serve de exemplo para como o agente irá tratar os dados de retorno
+            print(f"Bloco: {resposta.get('bloco')}\n",
+                  f"Atributos: {resposta.get('atributos', [])}\n",
+                  f"Pontuacao: {resposta.get('pontuacao', 0)}\n"
+                  f"Caracteristicas: \n",
+                  f"  - Tem Wumpus: {resposta.get('hasWumpus')}\n",
+                  f"  - Tem Morcegos: {resposta.get('hasBats')}\n",
+                  f"  - Tem Buraco: {resposta.get('hasPit')}\n",
+                  f"  - Tem Flecha: {resposta.get('hasArrow')}\n",
+                  f"  - Tem Gold: {resposta.get('hasGold')}\n",
+                  f"Status: " {resposta.get('status')})
+            """
+
             self.desenhar_barra()
-            
+            if( resposta.get('status') != 0 ):
+
+                self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, False, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
+                pygame.display.flip()
+
+                textoFinal = ""
+
+                if(resposta.get('status') == 1):
+                    textoFinal = "Perdeuuu!"
+                elif( resposta.get('status') == 2 ):
+                    if ( resposta.get('pontuacao') < 1000 ):
+                        textoFinal = "Fraco..."
+                    elif ( resposta.get('pontuacao') > 2000 ):
+                        textoFinal = self.geraTexto('paiNosso')
+                    else:
+                        textoFinal = " Saiu do labirinto!\n Pelo meno tá vivo"
+
+                self.endgame(textoFinal)
+
             pygame.display.flip()
             self.clock.tick(10)
 
@@ -241,49 +276,106 @@ class Main:
 
             pygame.display.flip()
 
-        
-    #   - Agente venceu! (Matou o Wumpus (+500) e pegou o Ouro (+1000))
-    #   - O agente morreu (caiu num buraco)
-    #   - O agente morreu (wumpus o matou)
-    #   - Morcegos te jogaram em (...)
-    # Se o agente não pegar o ouro, não pode sair da caverna/labirinto
-    """
-    ...
-    """
+
+    
     def endgame(self, texto):
-        # fundo_pausado = self.tela.copy()
+        
+        fundo_pausado = self.tela.copy()
+        
+        try:
+            bg_pause = pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")).convert()
+            bg_pause = pygame.transform.scale(bg_pause, (LARGURA_TELA, ALTURA_TELA))
+        except:
+            bg_pause = fundo_pausado
 
-        # pelicula = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
-        # pelicula.set_alpha(170) # Nível de escurecimento (0 a 255)
-        # pelicula.fill((0, 0, 0)) 
+        pelicula = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
+        pelicula.set_alpha(150) 
+        pelicula.fill((0, 0, 0)) 
 
-        # Carregando constantes apenas uma vez
-        FONT = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
-        ENDGAME_TEXT = FONT.render(f"{texto}", True, "White")
-        ENDGAME_RECT = ENDGAME_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2 - 59*2 +50)) # 
-        # 59 PIXELS
-        # -(59 + 100 + 59 - 35)
+        # Carregando fontes
+        FONT_TITULO = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
+        FONT_TEXTO = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)
+
+        popup_largura = 400
+        popup_altura = 350
+        popup_x = (LARGURA_TELA - popup_largura) // 2
+        popup_y = (ALTURA_TELA - popup_altura) // 2
+        popup_rect = pygame.Rect(popup_x, popup_y, popup_largura, popup_altura)
+
+        titulo_text = FONT_TITULO.render("GAME OVER", True, "Black")
+        titulo_rect = titulo_text.get_rect(center=(LARGURA_TELA // 2, popup_y + 50))
+
+        resultado_text = FONT_TEXTO.render(f"{texto}", True, "Black")
+        resultado_rect = resultado_text.get_rect(center=(LARGURA_TELA // 2, popup_y + 110))
+
+        pontuacao_text = FONT_TEXTO.render(f"Pontuacao: {self.labirinto.pontuacao}", True, "Black")
+        pontuacao_rect = pontuacao_text.get_rect(center=(LARGURA_TELA // 2, popup_y + 160))
+
         img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
+        olho = pygame.image.load(os.path.join(DIR_PATH, "olhoBranco.png")).convert_alpha()
+        # Botões do Popup
+        VIEW_GAME_BTN = Button(image=img, pos=(LARGURA_TELA // 2, popup_y + 230), text_input="VIEW", font=FONT_TEXTO, base_color="#d7fcd4", hovering_color="White")
+        QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, popup_y + 300), text_input="QUIT", font=FONT_TEXTO, base_color="#d7fcd4", hovering_color="White")
 
-        # PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="RETORNAR", font=FONT, base_color="#d7fcd4", hovering_color="White")
-        QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
+        # Botão exclusivo para a vista do tabuleiro limpo (fora do popup)
+        VOLTAR_MENU_BTN = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA - 60), text_input="VOLTAR", font=FONT_TEXTO, base_color="#d7fcd4", hovering_color="White")
 
+        mostrar_jogo = False
         rodando = True
+        
         while rodando:
-            self.screen.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
             MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-            self.tela.blit(ENDGAME_TEXT, ENDGAME_RECT)
+            if mostrar_jogo:
+                self.tela.blit(fundo_pausado, (0, 0))
+                self.tela.blit(pelicula, (0, 0))
+                botoes_ativos = [VOLTAR_MENU_BTN]
+            else:
+                self.tela.blit(bg_pause, (0, 0))
+                
+                pygame.draw.rect(self.tela, (255, 255, 255), popup_rect, border_radius=15)
+                pygame.draw.rect(self.tela, (0, 0, 0), popup_rect, 4, border_radius=15)
 
-            for button in [QUIT_BUTTON]:
+                self.tela.blit(titulo_text, titulo_rect)
+                self.tela.blit(resultado_text, resultado_rect)
+                self.tela.blit(pontuacao_text, pontuacao_rect)
+                
+                botoes_ativos = [VIEW_GAME_BTN, QUIT_BUTTON]
+
+            for button in botoes_ativos:
                 button.changeColor(MENU_MOUSE_POS)
+                button.changeColorImagem(MENU_MOUSE_POS)
                 button.update(self.tela)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     rodando = False
+                    self.rodando = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        rodando = False
+                    for button in botoes_ativos:
+                        if button.checkForInput(MENU_MOUSE_POS):
+                            if button == QUIT_BUTTON:
+                                rodando = False
+                                self.rodando = False
+                            elif button == VIEW_GAME_BTN:
+                                mostrar_jogo = True  # Oculta o quadrado branco e mostra o labirinto
+                            elif button == VOLTAR_MENU_BTN:
+                                mostrar_jogo = False # Volta para a tela branca de pontuação final
 
             pygame.display.flip()
+
+    @staticmethod
+    def geraTexto(param: str):
+
+        try:
+            xored = base64.b64decode('OTIoDyxSU2U8BAcqDlMFBgYASA=='.encode('utf-8'))
+            chave_bytes = param.encode('utf-8')
+            
+            texto_bytes = bytearray()
+            for i in range(len(xored)):
+                texto_bytes.append(xored[i] ^ chave_bytes[i % len(chave_bytes)])
+            print(texto_bytes.decode('utf-8')) 
+            return texto_bytes.decode('utf-8')
+        except Exception as erro:
+            print(f"ALERTA DE ERRO NA CRIPTOGRAFIA: {erro}")
+            return "Para béns!"
