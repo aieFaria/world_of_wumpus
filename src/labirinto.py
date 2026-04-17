@@ -159,7 +159,6 @@ class Labirinto:
                     if ( bloco.hasGold and not (player_x, player_y) in self.visitadosLabirinto):
                         self.visitadosLabirinto.add((player_x, player_y))
                         self.pontuacao += 1000
-                        # Adicionar efeito sonoro, se houver, bem aqui!
                     
                     # Coleta automatica da flecha
                     if ( bloco.hasArrow and not (player_x, player_y) in self.visitadosLabirinto ):
@@ -168,7 +167,6 @@ class Labirinto:
                         # print("flechas: ", self.qtd_flechas)
                         self.hasArrow = True # Indica que o jogador tem flecha
                         # bloco.hasArrow = False
-                        # Adicionar efeito sonoro, se houver, bem aqui!
 
                     # Ativação dos morcegos
                     if ( bloco.hasBats and mudou_de_bloco ):
