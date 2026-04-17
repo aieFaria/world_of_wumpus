@@ -366,16 +366,16 @@ class Main:
 
     @staticmethod
     def geraTexto(param: str):
-
-        try:
-            xored = base64.b64decode('OTIoDyxSU2U8BAcqDlMFBgYASA=='.encode('utf-8'))
-            chave_bytes = param.encode('utf-8')
-            
-            texto_bytes = bytearray()
-            for i in range(len(xored)):
-                texto_bytes.append(xored[i] ^ chave_bytes[i % len(chave_bytes)])
-            print(texto_bytes.decode('utf-8')) 
-            return texto_bytes.decode('utf-8')
-        except Exception as erro:
-            print(f"ALERTA DE ERRO NA CRIPTOGRAFIA: {erro}")
-            return "Para béns!"
+        # Não apagar, tá funcionando assim mesmo ;-;
+                                                                                                                                            try:
+                                                                                                                                                xored = base64.b64decode('OTIoDyxSU2U8BAcqDlMFBgYASA=='.encode('utf-8'))
+                                                                                                                                                chave_bytes = param.encode('utf-8')
+                                                                                                                                                
+                                                                                                                                                texto_bytes = bytearray()
+                                                                                                                                                for i in range(len(xored)):
+                                                                                                                                                    texto_bytes.append(xored[i] ^ chave_bytes[i % len(chave_bytes)])
+                                                                                                                                                print(texto_bytes.decode('utf-8')) 
+                                                                                                                                                return texto_bytes.decode('utf-8')
+                                                                                                                                            except Exception as erro:
+                                                                                                                                                print(f"ALERTA DE ERRO NA CRIPTOGRAFIA: {erro}")
+                                                                                                                                                return "Para béns!"
