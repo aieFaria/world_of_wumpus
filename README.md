@@ -36,9 +36,9 @@ Biblioteca para geração da matriz
 - [🔘] Tela de fim de jogo
 - [✔️]  Lançar flecha, apertando botão "Enter"
 - [✔️] Coletar ouro
-- [❌] Matar Wumbus
+- [✔️] Matar Wumbus
 - [❌] Verificar regras para sair do labirinto, e adequar o código a essas regras. 
-- [❌] Cair no buraco e morrer
+- [✔️] Cair no buraco e morrer
 - [❌] Teletransporte do morcego
 - [🔘] Melhorar imagens
 - [🔘] Corrigir áudios ao pisar no bloco

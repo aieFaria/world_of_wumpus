@@ -26,7 +26,7 @@ class Labirinto:
         
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
-            "frente": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_frente_p.png")).convert_alpha(),
+            "frente": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_frente.png")).convert_alpha(),
             "costas": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_costas.png")).convert_alpha(),
             "direita": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_direita.png")).convert_alpha(),
             "esquerda": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_esquerda.png")).convert_alpha()
