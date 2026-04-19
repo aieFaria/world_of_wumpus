@@ -237,14 +237,16 @@ class Main:
 
         # Carregando constantes apenas uma vez
         FONT = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
+        FONTR = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 25)
         PAUSED_TEXT = FONT.render("Jogo pausado", True, "White")
         PAUSED_RECT = PAUSED_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2 - 59*2 +50)) # 
         # 59 PIXELS
         # -(59 + 100 + 59 - 35)
         img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
 
-        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="BACK", font=FONT, base_color="#d7fcd4", hovering_color="White")
-        QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
+        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="BACK", font=FONT, base_color="#d7fcd4", hovering_color="#6fff65")
+        RESTART_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="RESTART", font=FONTR, base_color="#d7fcd4", hovering_color="#ffe46b")
+        QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-5)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="#f57777")
 
         rodando = True
         while rodando:
@@ -256,7 +258,7 @@ class Main:
             
             self.tela.blit(PAUSED_TEXT, PAUSED_RECT)
 
-            for button in [PLAY_BUTTON, QUIT_BUTTON]:
+            for button in [PLAY_BUTTON, RESTART_BUTTON,QUIT_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
                 button.update(self.tela)
 
@@ -271,6 +273,8 @@ class Main:
                             self.pause = False
                             self.rodando = True
                             rodando = False
+                    if RESTART_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        print("Reiniciando")
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         rodando = False
 
