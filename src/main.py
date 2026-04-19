@@ -368,7 +368,7 @@ class Main:
     def geraTexto(param: str):
         # Não apagar, tá funcionando assim mesmo ;-;
                                                                                                                                             try:
-                                                                                                                                                xored = base64.b64decode('OTIoDyxSU2U8BAcqDlMFBgYASA=='.encode('utf-8'))
+                                                                                                                                                xored = base64.b64decode('UCAgHS4yME5QayUrARcSTwYIHy9O'.encode('utf-8'))
                                                                                                                                                 chave_bytes = param.encode('utf-8')
                                                                                                                                                 
                                                                                                                                                 texto_bytes = bytearray()

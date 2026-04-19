@@ -42,7 +42,7 @@ Biblioteca para geração da matriz
 - [❌] Teletransporte do morcego
 - [🔘] Melhorar imagens
 - [🔘] Corrigir áudios ao pisar no bloco
-- [🔘] Colocar a saída no bloco [0,0]. E para interagir com a saída aperta o botão "Enter"
+- [✔️] Colocar a saída no bloco [0,0]. E para interagir com a saída aperta o botão "Enter"
 - [❌] Criar Slider para mudança do tamanho de labirinto na tela de opcoes
 - [🔘] Incrementar dificuldade, caso o jogador tenha GANHADO o jogo.
 
