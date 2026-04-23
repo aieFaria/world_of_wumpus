@@ -229,6 +229,15 @@ class Labirinto:
     # Modificar a função "def gerar_labirinto(self, tamanho_labirinto)". "tamanho_labirinto" será um par ordernado (linha, coluna)
     # Tamanho padrão, aumentando a cada vitória ou definido pelo usuário.
     def gerar_labirinto(self):
+
+        # Resetar tudo aqui dentro:
+        self.pontuacao = 0
+        self.hasArrow = False # Indica se o jogador possui a flecha
+        self.qtd_flechas = 0 
+        self.olhandoWumpus = []
+        self.morcegos = {"espera": False, "tempo": 0, "posicao": (0, 0)}
+        self.jogador_status = 0
+
         for linha in range(self.tamanho_lab):
             for coluna in range(self.tamanho_lab):
                 # ParÂmetros de Bloco: 

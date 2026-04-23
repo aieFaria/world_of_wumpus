@@ -274,7 +274,18 @@ class Main:
                             self.rodando = True
                             rodando = False
                     if RESTART_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        print("Reiniciando")
+
+                        self.player_x = 0
+                        self.player_y = 0
+                        self.labirinto.gerar_labirinto()
+
+                        if (self.pause == True):
+                            self.pause = False
+                            self.rodando = True
+                            rodando = False
+
+                        # print("Reiniciando")
+
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         rodando = False
 
