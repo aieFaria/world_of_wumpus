@@ -29,6 +29,14 @@ Como gerar executavel:
 Biblioteca para geração da matriz
 > pip install numpy
 
+Biblioteca para exportação WEB
+> pip install pygbag
+
+Como exportar usando pygbag
+> python -m pygbag
+
+#### Ver mais tarde: https://share.google/aimode/dLWY4sbj4vrbxZ5Rr
+
 ## Etapas a serem desenvolvidas
 
 - [✔️] Tela inicial (tamanho do jogo, qtd de bichos?)
