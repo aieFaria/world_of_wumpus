@@ -98,7 +98,7 @@ class Labirinto:
                 if [linha, coluna] == [player_x, player_y]:
                     bloco.setVisible(True)
                         
-                    if( self.hasArrow and acao):
+                    if( self.hasArrow and acao and not self.morcegos["espera"]):
                         # Executar disparo da flecha com base na direção
                         # print("acao: ", self.qtd_flechas)
                         self.qtd_flechas -= 1
