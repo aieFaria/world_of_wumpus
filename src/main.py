@@ -283,13 +283,10 @@ class Main:
                             self.rodando = True
                             rodando = False
 
-                        # print("Reiniciando")
-
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         rodando = False
 
             pygame.display.flip()
-
 
     def endgame(self, texto):
         

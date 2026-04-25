@@ -16,7 +16,6 @@ class Index:
         self.main = None
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size
-        
         return pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), size)
 
     def iniciar(self, is_on=True):
@@ -84,6 +83,7 @@ class Index:
 
                     if HELP_BUTTON.checkForInput(MENU_MOUSE_POS):
                         # definir o que vai acontecer quando clicar em "Como jogar?"
+                        self.mostrar_teclas()
                         print("Como jogar?")
 
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
@@ -100,7 +100,8 @@ class Index:
         tamanho_lab = self.tamanho_lab
         clock = pygame.time.Clock()
         running = True
-
+        dragging = False
+        
         OPTIONS_TEXT = self.get_font(40).render("OPTIONS", True, "White")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(LARGURA_TELA // 2, 80))
         HELP_TEXT = self.get_font(12).render("↑/↓ mudar tamanho\n\n ENTER salvar\n\n ESC voltar", True, "White")
@@ -114,10 +115,12 @@ class Index:
             SIZE_TEXT = self.get_font(30).render(f"Tamanho: {tamanho_lab}x{tamanho_lab}", True, "White")
             SIZE_RECT = SIZE_TEXT.get_rect(center=(LARGURA_TELA // 2, 180))
             # TECLA ENTER E ESC voltam e salvam, ambas
-            
+
             self.screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
             self.screen.blit(SIZE_TEXT, SIZE_RECT)
             self.screen.blit(HELP_TEXT, HELP_RECT)
+            self.draw_slider(tamanho_lab)
+            
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -134,11 +137,59 @@ class Index:
                     elif event.key == pygame.K_ESCAPE or event.key == pygame.K_RETURN: # TECLA ESC ou ENTER
                         running = False
                         break
-
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mx, my = event.pos
+                    x_slider_start = LARGURA_TELA // 2 - SL_RECT_LARGURA // 2
+                    x_slider_end = LARGURA_TELA // 2 + SL_RECT_LARGURA // 2
+                    y_slider = ALTURA_TELA2 // 2 + SL_RECT_ALTURA // 2
+                    # Check if click is within slider bounds and handle (radius 13)
+                    if (x_slider_start - 30 <= mx <= x_slider_end + 30) and (y_slider - 15 <= my <= y_slider + 15):
+                        dragging = True
+                if event.type == pygame.MOUSEBUTTONUP:
+                    dragging = False
+                if event.type == pygame.MOUSEMOTION and dragging:
+                    x_slider_start = LARGURA_TELA // 2 - SL_RECT_LARGURA // 2
+                    x_slider_end = LARGURA_TELA // 2 + SL_RECT_LARGURA // 2
+                    mx = max(x_slider_start, min(event.pos[0], x_slider_end))
+                    # Map mouse position to tamanho_lab range (6 to 20)
+                    relative_pos = (mx - x_slider_start) / SL_RECT_LARGURA
+                    tamanho_lab = int(TAMANHO_LAB + relative_pos * (20 - TAMANHO_LAB))
+            
             pygame.display.flip()
             clock.tick(30)
 
         return tamanho_lab
+    
+    def draw_slider(self, value):
+        x = LARGURA_TELA // 2 - SL_RECT_LARGURA // 2
+        y = ALTURA_TELA2 // 2
+
+        pygame.draw.rect(self.screen, (255, 255, 255), (x, y, SL_RECT_LARGURA, SL_RECT_ALTURA), border_radius=13)
+        min_size = TAMANHO_LAB
+        max_size = 20
+        handle_x = x + int(((value - min_size) / (max_size - min_size)) * SL_RECT_LARGURA)
+        pygame.draw.circle(self.screen, (0, 0, 0), (handle_x, y+SL_RECT_ALTURA//2), 11)
+
+    """
+    Método que desenha a tela de tutorial/teclas permitidas no jogo
+    """
+    def mostrar_teclas(self):
+        clock = pygame.time.Clock()
+        running = True
+
+        while running:
+            self.screen.blit(pygame.image.load(os.path.join(DIR_PATH, "endgame_bg.png")), (0, 0))
+            self.screen.blit(pygame.image.load(os.path.join(DIR_PATH, "teclas", "setas.png")), (10, 10))
+
+            self.screen.blit(pygame.image.load(os.path.join(DIR_PATH, "teclas", "enter.png")), (400, 100))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+
+            pygame.display.flip()
+            clock.tick(30)
 
 index = Index()
 index.iniciar(True)
