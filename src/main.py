@@ -22,7 +22,7 @@ class Main:
         self.agente = Agente(1, self.labirinto)
         #pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
         self.fonte = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)
-        self.acao = False      
+        self.acao = False
 
         img_btn_central = pygame.image.load(os.path.join(DIR_PATH, "pause.png")).convert_alpha()
         #img_btn_central.fill((255, 255, 255))
@@ -202,9 +202,20 @@ class Main:
 
                 self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, False, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
                 pygame.display.flip()
-
+                
                 textoFinal = ""
+                efeitoSonoro = ""
 
+                # Definir inicio dos sons nestes blocos IF:
+                bloco = self.labirinto.blocos[self.player_x][self.player_y]
+                if( bloco.hasWumpus == "vivo" ):
+                    efeitoSonoro = "wumpus"
+                    print("Tem wumpus")
+                elif( bloco.hasPit ):
+                    print("Tem buraco")
+                    efeitoSonoro = "pit"
+
+                # Definição do texto de morte:
                 if(resposta.get('status') == 1):
                     textoFinal = "Perdeuuu!"
                 elif( resposta.get('status') == 2 ):
@@ -215,7 +226,8 @@ class Main:
                     else:
                         textoFinal = " Saiu do labirinto!\n Pelo meno tá vivo"
 
-                self.endgame(textoFinal)
+                
+                self.endgame(textoFinal, efeitoSonoro)
 
             pygame.display.flip()
             self.clock.tick(10)
@@ -291,8 +303,10 @@ class Main:
             pygame.display.flip()
 
 
-    def endgame(self, texto):
+    def endgame(self, texto, som):
         
+        if(som): self.labirinto.sons_lab[som].play()
+        pygame.time.delay(1500)  # Timer de aguardo para chamar a tela de final de jogo
         fundo_pausado = self.tela.copy()
         
         try:
