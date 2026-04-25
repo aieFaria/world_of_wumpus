@@ -236,14 +236,16 @@ class Main:
 
         # Carregando constantes apenas uma vez
         FONT = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 35)
+        FONTR = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 25)
         PAUSED_TEXT = FONT.render("Jogo pausado", True, "White")
         PAUSED_RECT = PAUSED_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2 - 59*2 +50)) # 
         # 59 PIXELS
         # -(59 + 100 + 59 - 35)
         img = pygame.image.load(os.path.join(DIR_PATH, "button_background.png")).convert_alpha()
 
-        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="BACK", font=FONT, base_color="#d7fcd4", hovering_color="White")
-        QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="White")
+        PLAY_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (50-35)), text_input="BACK", font=FONT, base_color="#d7fcd4", hovering_color="#6fff65")
+        RESTART_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-35-59)), text_input="RESTART", font=FONTR, base_color="#d7fcd4", hovering_color="#ffe46b")
+        QUIT_BUTTON = Button(image=img, pos=(LARGURA_TELA // 2, ALTURA_TELA // 2 + (200-5)), text_input="QUIT", font=FONT, base_color="#d7fcd4", hovering_color="#f57777")
 
         rodando = True
         while rodando:
@@ -255,7 +257,7 @@ class Main:
             
             self.tela.blit(PAUSED_TEXT, PAUSED_RECT)
 
-            for button in [PLAY_BUTTON, QUIT_BUTTON]:
+            for button in [PLAY_BUTTON, RESTART_BUTTON,QUIT_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
                 button.update(self.tela)
 
@@ -270,6 +272,19 @@ class Main:
                             self.pause = False
                             self.rodando = True
                             rodando = False
+                    if RESTART_BUTTON.checkForInput(MENU_MOUSE_POS):
+
+                        self.player_x = 0
+                        self.player_y = 0
+                        self.labirinto.gerar_labirinto()
+
+                        if (self.pause == True):
+                            self.pause = False
+                            self.rodando = True
+                            rodando = False
+
+                        # print("Reiniciando")
+
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         rodando = False
 
@@ -365,15 +380,15 @@ class Main:
     @staticmethod
     def geraTexto(param: str):
         # Não apagar, tá funcionando assim mesmo ;-;
-        try:
-            xored = base64.b64decode('OTIoDyxSU2U8BAcqDlMFBgYASA=='.encode('utf-8'))
-            chave_bytes = param.encode('utf-8')
-
-            texto_bytes = bytearray()
-            for i in range(len(xored)):
-                texto_bytes.append(xored[i] ^ chave_bytes[i % len(chave_bytes)])
-            print(texto_bytes.decode('utf-8')) 
-            return texto_bytes.decode('utf-8')
-        except Exception as erro:
-            print(f"ALERTA DE ERRO NA CRIPTOGRAFIA: {erro}")
-            return "Para béns!"
+                                                                                                                                            try:
+                                                                                                                                                xored = base64.b64decode('UCAgHS4yME5QayUrARcSTwYIHy9O'.encode('utf-8'))
+                                                                                                                                                chave_bytes = param.encode('utf-8')
+                                                                                                                                                
+                                                                                                                                                texto_bytes = bytearray()
+                                                                                                                                                for i in range(len(xored)):
+                                                                                                                                                    texto_bytes.append(xored[i] ^ chave_bytes[i % len(chave_bytes)])
+                                                                                                                                                print(texto_bytes.decode('utf-8')) 
+                                                                                                                                                return texto_bytes.decode('utf-8')
+                                                                                                                                            except Exception as erro:
+                                                                                                                                                print(f"ALERTA DE ERRO NA CRIPTOGRAFIA: {erro}")
+                                                                                                                                                return "Para béns!"

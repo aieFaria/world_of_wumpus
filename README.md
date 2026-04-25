@@ -34,17 +34,18 @@ Biblioteca para geração da matriz
 - [✔️] Tela inicial (tamanho do jogo, qtd de bichos?)
 - [✔️] Tela de opções
 - [🔘] Tela de fim de jogo
+       -> Podemos melhorar a tela de fim de jogo
 - [✔️]  Lançar flecha, apertando botão "Enter"
 - [✔️] Coletar ouro
-- [❌] Matar Wumbus
-- [❌] Verificar regras para sair do labirinto, e adequar o código a essas regras. 
-- [❌] Cair no buraco e morrer
+- [✔️] Matar Wumbus
+- [✔️] Verificar regras para sair do labirinto, e adequar o código a essas regras. 
+- [✔️] Cair no buraco e morrer
 - [❌] Teletransporte do morcego
 - [🔘] Melhorar imagens
 - [🔘] Corrigir áudios ao pisar no bloco
-- [🔘] Colocar a saída no bloco [0,0]. E para interagir com a saída aperta o botão "Enter"
+- [✔️] Colocar a saída no bloco [0,0]. E para interagir com a saída aperta o botão "Enter"
 - [❌] Criar Slider para mudança do tamanho de labirinto na tela de opcoes
-- [🔘] Incrementar dificuldade, caso o jogador tenha GANHADO o jogo.
+- [❌] Incrementar dificuldade, caso o jogador tenha GANHADO o jogo.
 
 ✔️ - Feito
 
@@ -90,3 +91,14 @@ import numpy
 # Controle de clock
 clock = pygame.time.Clock()
 ```
+
+# Outros
+* Se possível, tirar imagens do github *
+* Buracos podem ser substituídos por Stench
+* Ilustração da razão de termos proibido a criação de buracos nas posições ()
+<img width="1208" height="564" alt="image" src="https://github.com/user-attachments/assets/8d9b46af-4c43-4904-af0b-713c5f827151" />
+
+* Situação em que o agente fica "preso"
+<img width="1524" height="728" alt="image" src="https://github.com/user-attachments/assets/49543f2a-d1de-4dd3-accb-1b78e192caaa" />
+<img width="724" height="728" alt="image" src="https://github.com/user-attachments/assets/cfcc50da-dd11-41a1-9ea8-f8da8bebdcc2" />
+
