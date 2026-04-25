@@ -35,7 +35,9 @@ class Labirinto:
         self.sons_lab = {
             "bafo": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "bafoDeBosta.mp3")),
             "brisa": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "brisa.mp3")),
-            "morcegos": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "flapping.mp3"))
+            "morcegos": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "flapping.mp3")),
+            "wumpus": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "diabeisso.mp3")),
+            "pit": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "flapping.mp3"))
         }
 
         # Geração do labirinto ao iniciar, serve para acessar os blocos apenas quando for necessário
@@ -98,7 +100,7 @@ class Labirinto:
                 if [linha, coluna] == [player_x, player_y]:
                     bloco.setVisible(True)
                         
-                    if( self.hasArrow and acao):
+                    if( self.hasArrow and acao and not self.morcegos["espera"]):
                         # Executar disparo da flecha com base na direção
                         # print("acao: ", self.qtd_flechas)
                         self.qtd_flechas -= 1
@@ -324,22 +326,22 @@ class Labirinto:
             self.bloco = self.blocos[linha - 1][coluna] # Baixo
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
-                if (attribute == "Stench\n"): self.olhandoWumpus.append((linha-1, coluna, "frente"))
+                if (attribute == "Stench\n"): self.olhandoWumpus.extend((n, coluna, "frente") for n in range(0, linha) )
         if linha < self.tamanho_lab-1:
             self.bloco = self.blocos[linha + 1][coluna] # Cima
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
-                if (attribute == "Stench\n"): self.olhandoWumpus.append((linha+1, coluna, "costas"))
+                if (attribute == "Stench\n"): self.olhandoWumpus.extend((n, coluna, "costas") for n in range(linha, TAMANHO_LAB))
         if coluna > 0:
             self.bloco = self.blocos[linha][coluna - 1]  # Esquerda
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
-                if (attribute == "Stench\n"): self.olhandoWumpus.append((linha, coluna-1, "direita"))
+                if (attribute == "Stench\n"): self.olhandoWumpus.extend((linha, n, "direita") for n in range(0, coluna))
         if coluna < self.tamanho_lab-1:
             self.bloco = self.blocos[linha][coluna + 1]  # Direita
             if not (self.verificar_bloco(self.bloco, attribute)):
                 self.bloco.attributes.append(attribute)
-                if (attribute == "Stench\n"): self.olhandoWumpus.append((linha, coluna+1, "esquerda"))
+                if (attribute == "Stench\n"): self.olhandoWumpus.extend((linha, n, "esquerda") for n in range(coluna, TAMANHO_LAB))
 
     # Método para verificar se o bloco adjacente tem um Buraco, Wumpus ou Morcego
     # Ou se já possui o atributo que será escrito.
@@ -363,22 +365,28 @@ class Labirinto:
             efeitoSonoro.stop()
 
     def matarWumpus(self, x, y, direcao):
-        posicao_blocoX = -1
-        posicao_blocoY = -1
+        posicao_blocoX = x
+        posicao_blocoY = y
 
-        match direcao:
-            case "direita":
-                posicao_blocoX, posicao_blocoY = x, y + 1
-            case "esquerda":
-                posicao_blocoX, posicao_blocoY = x, y - 1
-            case "costas":
-                posicao_blocoX, posicao_blocoY = x - 1, y
-            case "frente":
-                posicao_blocoX, posicao_blocoY = x + 1, y
-            case _:
-                print("wft?")
+        blocoWumpus = False
 
-        bloco = self.blocos[posicao_blocoX][posicao_blocoY]
+        while not blocoWumpus:
+            match direcao:
+                case "direita":
+                    posicao_blocoX, posicao_blocoY = x, posicao_blocoY + 1
+                case "esquerda":
+                    posicao_blocoX, posicao_blocoY = x, posicao_blocoY - 1
+                case "costas":
+                    posicao_blocoX, posicao_blocoY = posicao_blocoX - 1, y
+                case "frente":
+                    posicao_blocoX, posicao_blocoY = posicao_blocoX + 1, y
+                case _:
+                    print("wft?")
+
+            bloco = self.blocos[posicao_blocoX][posicao_blocoY]
+
+            if(bloco.hasWumpus == "vivo"):
+                blocoWumpus = True
 
         if(bloco.hasWumpus == "vivo"):
             bloco.hasWumpus = "morto"
