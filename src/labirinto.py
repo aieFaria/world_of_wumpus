@@ -37,7 +37,8 @@ class Labirinto:
             "brisa": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "brisa.mp3")),
             "morcegos": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "flapping.mp3")),
             "wumpus": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "diabeisso.mp3")),
-            "pit": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "flapping.mp3"))
+            "pit": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "ahhhhhhh.mp3")),
+            "win": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "vitoria.mp3"))
         }
 
         # Geração do labirinto ao iniciar, serve para acessar os blocos apenas quando for necessário
@@ -118,6 +119,7 @@ class Labirinto:
                     # Condicional para verificar se deseja sair do Labirinto
                     if( (0, 0) == (player_x, player_y) and acao):
                         # Inserir lógica de fim de jogo (endgame)
+                        self.sons_lab["win"].play()
                         self.jogador_status = 2
                         print("saiu do labirinto")
 

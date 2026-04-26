@@ -113,7 +113,8 @@ class Main:
 
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
-                    # Finalizar index
+                    # NOTA: É uma possibilidade matar todas as telas do jogo ao clicar em fechar visto que
+                    #       não seria necessário fechar duas abas diferentes
                     self.labirinto.aux_parar_sons()
                     self.rodando = False
 
@@ -171,6 +172,11 @@ class Main:
                     elif evento.key == pygame.K_KP_ENTER or evento.key == pygame.K_RETURN:
                         #print("acao")
                         self.acao = True
+
+                    elif evento.key == pygame.K_ESCAPE:
+                        self.pause = True
+                        self.rodando = False
+                        self.paused()
                     
             # Executa o agente caso ele esteja ativo
             # self.ativa_agente define isso
@@ -275,7 +281,9 @@ class Main:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.labirinto.aux_parar_sons()
                     rodando = False
+                    
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         # Incrementar dificuldade, caso o jogador tenha GANHADO o jogo e não pausado.
@@ -285,7 +293,7 @@ class Main:
                             self.rodando = True
                             rodando = False
                     if RESTART_BUTTON.checkForInput(MENU_MOUSE_POS):
-
+                        self.labirinto.aux_parar_sons()
                         self.player_x = 0
                         self.player_y = 0
                         self.labirinto.gerar_labirinto()
@@ -296,6 +304,7 @@ class Main:
                             rodando = False
 
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        self.labirinto.aux_parar_sons()
                         rodando = False
 
             pygame.display.flip()
@@ -374,12 +383,15 @@ class Main:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.labirinto.aux_parar_sons()
                     rodando = False
                     self.rodando = False
+                    
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for button in botoes_ativos:
                         if button.checkForInput(MENU_MOUSE_POS):
                             if button == QUIT_BUTTON:
+                                self.labirinto.aux_parar_sons()
                                 rodando = False
                                 self.rodando = False
                             elif button == VIEW_GAME_BTN:
