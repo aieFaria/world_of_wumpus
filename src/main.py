@@ -208,7 +208,7 @@ class Main:
                   f"  - Tem Buraco: {resposta.get('hasPit')}\n",
                   f"  - Tem Flecha: {resposta.get('hasArrow')}\n",
                   f"  - Tem Gold: {resposta.get('hasGold')}\n",
-                  f"Status: " {resposta.get('status')})
+                  f"Status: {resposta.get('status')}")
             """
 
             self.desenhar_barra()
