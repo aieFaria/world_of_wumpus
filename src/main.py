@@ -194,6 +194,7 @@ class Main:
             self.player_x, self.player_y = resposta.get("bloco", (-1, -1))
 
             if( self.ativa_agente ): self.agente.leituraLab = resposta
+            # print("resposta: ", resposta)
 
             """
             # Mostra no console o retorno do método desenhar:
