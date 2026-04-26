@@ -174,14 +174,14 @@ class Index:
                     elif menu_aberto:
                         # Verifica clique nas opções
                         for i, opcao in enumerate(opcoes):
-                            rect_opcao = pygame.Rect(520, 175 + i * 30, 116, 30)
+                            rect_opcao = pygame.Rect(520, 215 + i * 30, 116, 30)
                             if rect_opcao.collidepoint(event.pos):
                                 dificuldade = opcao
                                 menu_aberto = False
                         else:
                             print("fora!")
                             # Clicou fora do menu
-                            if not any(pygame.Rect(220, 175 + i * 30, 116, 30).collidepoint(event.pos) for i in range(len(opcoes))):
+                            if not any(pygame.Rect(220, 215 + i * 30, 116, 30).collidepoint(event.pos) for i in range(len(opcoes))):
                                 if not menu_rect.collidepoint(event.pos):
                                     menu_aberto = False
 
@@ -259,7 +259,7 @@ class Index:
         # Desenha as opções se o menu estiver aberto
         if menu_aberto:
             for i, opcao in enumerate(opcoes):
-                rect_opcao = pygame.Rect(520, 175 + i * 30, 116, 30)
+                rect_opcao = pygame.Rect(520, 215 + i * 30, 116, 30)
                 pygame.draw.rect(self.screen, cor, rect_opcao, 2)
                 text_opcao = self.get_font(14).render(opcao, True, cor)
                 self.screen.blit(text_opcao, (rect_opcao.x + 10, rect_opcao.y + 8))

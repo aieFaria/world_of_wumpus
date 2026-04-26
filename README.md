@@ -52,7 +52,7 @@ Como exportar usando pygbag
 - [🔘] Melhorar imagens
 - [✔️] Corrigir áudios ao pisar no bloco
 - [✔️] Colocar a saída no bloco [0,0]. E para interagir com a saída aperta o botão "Enter"
-- [❌] Criar Slider para mudança do tamanho de labirinto na tela de opcoes
+- [✔️] Criar Slider para mudança do tamanho de labirinto na tela de opcoes
 - [❌] Incrementar dificuldade, caso o jogador tenha GANHADO o jogo.
 - [✔️] Colocar efeitos sonoros de morte. Modificar para mostrar morte antes da chamada da tela final
        
