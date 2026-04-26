@@ -19,7 +19,7 @@ class Main:
         self.clock = pygame.time.Clock()
         
         self.labirinto = Labirinto(self.tamanho_lab) # TAMANHO_LAB = 6 PADRÃO
-        self.agente = Agente(1, self.labirinto)
+        self.agente = Agente(1)
         #pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
         self.fonte = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)
         self.acao = False
@@ -111,6 +111,12 @@ class Main:
             self.acao = False
             mouse_pos = pygame.mouse.get_pos() # Verificar se pode tirar daqui
 
+            # Executa o movimento do agente caso ele esteja ativo
+            # self.ativa_agente define isso
+            # Por algum motivo ele toma conta dos eventos quando ativo
+            if self.ativa_agente:
+                self.agente.executar()
+
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     # NOTA: É uma possibilidade matar todas as telas do jogo ao clicar em fechar visto que
@@ -126,8 +132,18 @@ class Main:
                         self.rodando = False
                         self.paused()
                         # Exemplo: Fechar o jogo e voltar para o Menu Principal
+                
+                if evento.type == pygame.KEYDOWN:
 
-                if evento.type == pygame.KEYDOWN and not self.ativa_agente:
+                    if evento.key == pygame.K_ESCAPE:
+                        self.pause = True
+                        self.rodando = False
+                        self.paused()
+
+                    # Verificação condicional para barrar movimentação do jogador quando agente esta ativo
+                    is_from_agent = evento.dict.get('is_agent', False)
+                    if self.ativa_agente and not is_from_agent:
+                        continue # Ignora input do teclado físico se agente estiver ligado
 
                     # Condicional modificada para inalterar posição quando personagem não estiver olhando 
                     # para direção correta
@@ -172,21 +188,12 @@ class Main:
                     elif evento.key == pygame.K_KP_ENTER or evento.key == pygame.K_RETURN:
                         #print("acao")
                         self.acao = True
-
-                    elif evento.key == pygame.K_ESCAPE:
-                        self.pause = True
-                        self.rodando = False
-                        self.paused()
                     
-            # Executa o agente caso ele esteja ativo
-            # self.ativa_agente define isso
-            if self.ativa_agente:
-                self.agente.executar(self)
-                # if self.agente.finalizado:
-                #     print()
        
             resposta = self.labirinto.desenhar(self.tela, self.player_x, self.player_y, self.direcao, self.acao, ALTURA_BARRA, LARGURA_TELA, ALTURA_TELA)
             self.player_x, self.player_y = resposta.get("bloco", (-1, -1))
+
+            if( self.ativa_agente ): self.agente.leituraLab = resposta
 
             """
             # Mostra no console o retorno do método desenhar:
