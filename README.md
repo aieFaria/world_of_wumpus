@@ -48,12 +48,14 @@ Como exportar usando pygbag
 - [✔️] Matar Wumbus
 - [✔️] Verificar regras para sair do labirinto, e adequar o código a essas regras. 
 - [✔️] Cair no buraco e morrer
-- [❌] Teletransporte do morcego
+- [✔️] Teletransporte do morcego
 - [🔘] Melhorar imagens
-- [🔘] Corrigir áudios ao pisar no bloco
+- [✔️] Corrigir áudios ao pisar no bloco
 - [✔️] Colocar a saída no bloco [0,0]. E para interagir com a saída aperta o botão "Enter"
 - [❌] Criar Slider para mudança do tamanho de labirinto na tela de opcoes
 - [❌] Incrementar dificuldade, caso o jogador tenha GANHADO o jogo.
+- [✔️] Colocar efeitos sonoros de morte. Modificar para mostrar morte antes da chamada da tela final
+       
 
 ✔️ - Feito
 
