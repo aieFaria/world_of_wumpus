@@ -107,7 +107,7 @@ class Index:
         dragging = False
         
         OPTIONS_TEXT = self.get_font(40).render("OPTIONS", True, "White")
-        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(LARGURA_TELA // 2, 30))
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(LARGURA_TELA // 2, 50))
         # HELP_TEXT = self.get_font(12).render("↑/↓ mudar tamanho\n\n ENTER salvar\n\n ESC voltar", True, "White")
         HELP_TEXT = self.get_font(12).render("ENTER salvar\n\n ESC voltar", True, "White")
         HELP_RECT = HELP_TEXT.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA2 - 30))
@@ -223,7 +223,7 @@ class Index:
         y = 135
         # y = ALTURA_TELA2 // 2
 
-        pygame.draw.rect(self.screen, (255, 255, 255), (x, y, SL_RECT_LARGURA, SL_RECT_ALTURA), border_radius=13)
+        pygame.draw.rect(self.screen, (255, 255, 255), (x, 142, SL_RECT_LARGURA, 5), border_radius=13) # Fino ( ͡° ͜ʖ ͡°)
         min_size = TAMANHO_LAB
         max_size = 20
         handle_x = x + int(((value - min_size) / (max_size - min_size)) * SL_RECT_LARGURA)
