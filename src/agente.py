@@ -20,7 +20,7 @@ class Agente:
         self.anterior = None
         self.tentou_movimento = False
         self.cont_bloqueio = 0
-        self.tamanho_lab = None
+        self.tamanho_lab = 99 # tamanho ficticio para inciar o agente ter uma noção do tamanho, será alterado quando ele encontrar uma parede
 
         # self.historico = [] # Inicializa vazio
         self.visitados = set()
@@ -200,9 +200,9 @@ class Agente:
                     if i == x and j == y:
                         self.labirinto[i].append( blocoPercebido )
                     else:
-                        self.labirinto[i].append(
-                            BlocoI((i, j), [], False, "", False, False, False)
-                        )
+                        blocoAdicional = BlocoI((i, j), [], False, "", False, False, False)
+                        if (not blocoAdicional in self.labirinto): self.labirinto[i].append( blocoAdicional )
+            
 
         else:
             # Substitui o bloco caso já exista
