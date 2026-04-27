@@ -207,23 +207,23 @@ class Agente:
     def movimentacao_segura(self, x, y, bloco_alvo):
         target_x, target_y = bloco_alvo
         direcoes = [
-            (x + 1, y, pygame.K_DOWN), (x - 1, y, pygame.K_UP),  
-            (x, y + 1, pygame.K_RIGHT), (x, y - 1, pygame.K_LEFT)
+            (x + 1, y), (x - 1, y),  
+            (x, y + 1), (x, y - 1)
         ]
 
         acao = None
 
-        for vx, vy, direcao in direcoes:
-            if 0 <= vx < bloco_alvo[0] and vy > 0:
+        for vx, vy in direcoes:
+            if 0 <= vx < target_x and vy > 0:
                 acao = pygame.K_DOWN
                 
-            if bloco_alvo[0] < vx and x != bloco_alvo[0]:
+            if target_x < vx and x != target_x:
                 acao = pygame.K_UP
 
-            if 0 <= vy < bloco_alvo[1] and vx > 0:
+            if 0 <= vy < target_y and vx > 0:
                 acao = pygame.K_RIGHT
 
-            if bloco_alvo[1] < vy and y != bloco_alvo[1]:
+            if target_y < vy and y != target_y:
                 acao = pygame.K_LEFT
 
         #         # if( not self.foi_visitado(vx, vy) ):

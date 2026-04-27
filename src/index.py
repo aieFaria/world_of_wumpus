@@ -16,6 +16,7 @@ class Index:
         self.check = True
         self.dificuldade = "Difícil"
         self.main = None
+        self.clock = pygame.time.Clock()
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size
         return pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), size)
@@ -92,7 +93,8 @@ class Index:
                         running = False
             
             pygame.display.flip()
-
+            self.clock.tick(10)
+            
         pygame.quit()
 
     """
