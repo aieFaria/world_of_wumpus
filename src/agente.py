@@ -34,6 +34,7 @@ class Agente:
     def executar(self):
 
         tempo_atual = pygame.time.get_ticks()
+        x, y = self.ctrl.get("localizacao")
 
         if (not self.leituraLab):
             self.iniciar()
@@ -43,6 +44,9 @@ class Agente:
         if (self.atual is None):
             self.atual = pos_vinda_lab
             self.anterior = pos_vinda_lab
+
+        if ( self.leituraLab.get("pontuacao", 0) >= 3000 ):
+            self.finalizado = True
             
         self.tell( self.aux_convertDictBloco(self.leituraLab) )
 
@@ -52,7 +56,7 @@ class Agente:
 
                 self.anterior = self.atual
                 self.atual = pos_vinda_lab
-                x, y = self.ctrl.get("localizacao")
+                
 
                 if (self.mudando):
                     self.ask(x, y)
@@ -100,6 +104,22 @@ class Agente:
                 self.ultimo_move_time = tempo_atual
             
             # print("Leitura: ", self.labirinto, "  len: ", self.tamanho_lab)
+        
+        elif ( self.finalizado ): 
+            if tempo_atual - self.ultimo_move_time > self.delayMove:
+                self.movimentacao_segura(x, y, (0, 0))
+
+                if ( (x, y) == (0, 0) ):
+                    evento = pygame.event.Event(pygame.KEYDOWN, {
+                        'key': pygame.K_RETURN,
+                        'mod': 0,
+                        'is_agent': True # Flag para identificar que o agente que moveu
+                    })
+
+                    pygame.event.post(evento)
+
+                self.ultimo_move_time = tempo_atual
+                
 
     def mudando(self):
         print(f"Atual: {self.atual} | Anterior: {self.anterior}")
@@ -177,21 +197,41 @@ class Agente:
             self.labirinto[x][y] = blocoPercebido
 
     def movimentacao_segura(self, x, y, bloco_alvo):
-        target_x, target_y = bloco_alvo
-        acao = None
 
-        # Move towards target: Y-axis first (safer exploration), then X-axis
-        if y > target_y:
-            acao = pygame.K_LEFT   # Esquerda
-        elif y < target_y:
-            acao = pygame.K_RIGHT  # Direita
-        elif x < target_x:
-            acao = pygame.K_DOWN   # Baixo
-        elif x > target_x:
-            acao = pygame.K_UP     # Cima
+        if (x, y) == bloco_alvo:
+            return
 
-        if acao:
-            self.movimentar(acao)
+        # Variaveis de controle para Busca em Largura
+        fila_busca = deque( [( (x, y), [] )] )
+        visitados_bfs = set([(x, y)])
+        
+        while fila_busca:
+            (curr_x, curr_y), path = fila_busca.popleft()
+            
+            if (curr_x, curr_y) == bloco_alvo:
+                if path:
+                    proximo_passo, tecla = path[0]
+                    self.movimentar(tecla)
+                return
+
+            # Possíveis movimentos
+            vizinhos = [
+                ((curr_x + 1, curr_y), pygame.K_DOWN),
+                ((curr_x - 1, curr_y), pygame.K_UP),
+                ((curr_x, curr_y + 1), pygame.K_RIGHT),
+                ((curr_x, curr_y - 1), pygame.K_LEFT)
+            ]
+
+            for pos_prox, prox_tecla in vizinhos:
+                px, py = pos_prox
+
+                if ( (0 <= px < self.tamanho_lab) 
+                    and (0 <= py < self.tamanho_lab) 
+                    and (pos_prox not in self.perigosos) 
+                    and (pos_prox not in visitados_bfs) ):
+                    
+                    visitados_bfs.add(pos_prox)
+                    fila_busca.append((pos_prox, path + [(pos_prox, prox_tecla)]))
 
 
     def movimentar(self, tecla):

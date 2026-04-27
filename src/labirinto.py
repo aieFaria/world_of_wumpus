@@ -33,6 +33,8 @@ class Labirinto:
         
         print("Dificuldade", dificuldade)
         # self.dic_quantidades = {"morcegos": 0, "ouro": 3, "wumpus": 0, "flecha": 0, "buracos": 0 }
+        # self.dic_quantidades = {"morcegos": 2, "ouro": 3, "wumpus": 2, "flecha": 2, "buracos": 4 }
+        self.dic_quantidades = {"morcegos": 0, "ouro": 3, "wumpus": 0, "flecha": 0, "buracos": 0 }
         self.morcegos = {"espera": False, "tempo": 0, "posicao": (0, 0)}
         self.jogador_status = 0 # Estados possiveis do jogador: 0 - vivo, 1 - perdeu, 2 - ganhou
 
