@@ -22,7 +22,8 @@ class Agente:
         self.cont_bloqueio = 0
         self.tamanho_lab = None
 
-        self.historico = [] # Inicializa vazio
+        # self.historico = [] # Inicializa vazio
+        self.visitados = set()
 
         self.labirinto = [] # Matriz flexivel para memória
 
@@ -45,8 +46,6 @@ class Agente:
             
         self.tell( self.aux_convertDictBloco(self.leituraLab) )
 
-        # print(self.labirinto)
-        
         if ( self.leituraLab and not self.finalizado ):
 
             if (not self.pilha_caminho):
@@ -59,9 +58,10 @@ class Agente:
                 self.atual = pos_vinda_lab
                 x, y = self.ctrl.get("localizacao")
 
+                print("PILHA CAMINHO: ", self.pilha_caminho)
                 if (self.pilha_caminho):
                     destino = self.pilha_caminho[-1] # Lendo último valor da pilha para não precisar colocar novamente
-
+                    print("destino: ", destino)
                     if ((x, y) != destino):
 
                         if self.tentou_movimento and not self.mudando():
@@ -76,28 +76,31 @@ class Agente:
                                 self.tentou_movimento = False
                             else:
                                 self.movimentacao_segura(x, y, destino)
+                                # self.visitados.add((x, y))
 
                         else:
                             # Se moveu ou é o primeiro passo, reseta contador e move
                             self.cont_bloqueio = 0
                             self.movimentacao_segura(x, y, destino)
+                            self.visitados.add((x, y))
                             self.tentou_movimento = True  # Define como verdadeiro para indicar que foi tentado novo movimento
 
                     else:
                         self.cont_bloqueio = 0
                         self.pilha_caminho.pop()
+                        print("igual", self.pilha_caminho)
                         self.tentou_movimento = False
 
                 else:
                     # pensar para atribuir valores a pilha_caminho
                     # chamada da função ask aqui:
                     # self.ask()
-                    print(self.pilha_caminho)
-                    
+                    print("CAMINHO: ", self.pilha_caminho)
+                    print("Perigosos: ", self.perigosos)
 
                 self.ultimo_move_time = tempo_atual
             
-            print("Leitura: ", self.labirinto, "   len: ", self.tamanho_lab)
+            # print("Leitura: ", self.labirinto, "  len: ", self.tamanho_lab)
 
     def mudando(self):
         print(f"Atual: {self.atual} | Anterior: {self.anterior}")
@@ -106,52 +109,48 @@ class Agente:
     """
     Método ask, deve retornar a posição destino ou a sequencia de 'key' que leva ao destino
     mudar nome para "pensoLogoExisto" ao final
+
+    param x -> se refere à coordenada x do bloco atual
+    param y -> se refere à coordenada y do bloco atual
+    bloco atual = bloco em que o agente está atualmente
+    param atributos -> item atributos do dicionário leituraLab.
+    
+    A condicional que verifica se o bloco tem atributos, serve para calcular os blocos seguros adjacentes
+    ao bloco atual.
     """
     def ask(self):
+        # Se o bloco atual não contém nenhum atributo, ele é seguro.
+        x, y = self.leituraLab.get("bloco")
 
-        # Caso seja o movimento inicial ande nas casas (1, 0) e (0, 1)
-        if ( self.ctrl["localizacao"] == (0, 0) ):
-            self.pilha_caminho.append( (1, 0) )
-            self.pilha_caminho.append( (0, 1) )
-
-        # Caso não seja movimento inicial faça iteração sobre os elementos de self.labirinto
-        # para inferir qual movimento escolher
+        if (not self.leituraLab.get("atributos")):
+            # Falta colocar uma limitação de valor para x e y de acordo com tamanho_lab
+            if (x >= 0) and (y >= 0):
+                # Cima
+                self.pilha_caminho.append((x - 1, y))
+                # Baixo
+                self.pilha_caminho.append((x + 1, y))
+                # esquerda
+                self.pilha_caminho.append((x, y - 1))
+                # direita
+                self.pilha_caminho.append((x, y + 1))
         else:
+            self.perigosos.add((x, y))
+        
+        print("pilha: ", self.pilha_caminho)
+        for item in reversed(self.pilha_caminho):
+            if item[0] < 0 or item[1] < 0:
+                self.pilha_caminho.remove(item)
+            if item in (self.visitados):
+                self.pilha_caminho.remove(item)
             # Isaac, aquela tua verificação segue abaixo
             # Precisa alterar a chamada dessa função para iterar sobre os elementos 
             # descobertos a variavel "self.labirinto"
             # Ou então mesclar a lógica dela com o atual. 
-            """
-            def ask(self, x, y, atributos):
-                if (not atributos):
-                    # Faltou colocar uma limitação de valor para x e y,
-                    # Pois não tem nenhuma variável que defina o tamanho do lab variável
-                    # Ponto a se atentar & verificar se ocorrerá erro
-                    if (x >= 0) and (y >= 0):
-                        # Cima
-                        self.pilha_caminho.append((x - 1, y))
-                        # Baixo
-                        self.pilha_caminho.append((x + 1, y))
-                        # esquerda
-                        self.pilha_caminho.append((x, y - 1))
-                        # direita
-                        self.pilha_caminho.append((x, y + 1))
-                else:
-                    self.perigosos.add((x, y))
-
-                print("pilha:> ", self.pilha_caminho)
-                for item in reversed(self.pilha_caminho):
-                    if item[0] < 0 or item[1] < 0:
-                        self.pilha_caminho.remove(item)
-                    if item in (self.visitados):
-                        self.pilha_caminho.remove(item)
-            """
-
             # Notas para relembrar:
             # 1) Criar método para retornar blocos adjacentes a (x, y), vai facilitar algumas operações;
             # 2) Criar modo de fugir os blocos marcados como perigosos, sua criação não depende do método ask
             #    visto que pode ser uma coisa feita em paralelo e não irá interfetir em nada;
-            pass
+            # pass
 
     
     def iniciar(self):
@@ -199,7 +198,7 @@ class Agente:
                         self.labirinto[i].append(
                             BlocoI((i, j), [], False, "", False, False, False)
                         )
-            
+
         else:
             # Substitui o bloco caso já exista
             self.labirinto[x][y] = blocoPercebido
