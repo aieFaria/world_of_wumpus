@@ -10,11 +10,16 @@ class Agente:
     def __init__(self, id):
         # Atributo de instância do agente
         self.id = id
-        self.ultimo_move_time = 0
+        self.ultimo_move_time = pygame.time.get_ticks()
         self.finalizado = False
         self.perigosos = set() # Indica quais os locais com certeza agente não deve passar
         self.fila = deque() # pygame.K_RIGHT, pygame.K_LEFT
         self.pilha_caminho = [] # Consumida da direta para esquerda, pilha
+        # self.contador_passos = {"atual": (-2, -2), "cont": 0, "antigo":(-1, -1), "contAntigo": -1}
+        self.atual = None
+        self.anterior = None
+        self.tentou_movimento = False
+        self.cont_bloqueio = 0
 
         self.historico = [] # Inicializa vazio
 
@@ -30,36 +35,87 @@ class Agente:
 
         if (not self.leituraLab):
             self.iniciar()
+
+        pos_vinda_lab = self.leituraLab.get("bloco")
+
+        if (self.atual is None):
+            self.atual = pos_vinda_lab
+            self.anterior = pos_vinda_lab
             
         self.tell( self.aux_convertDictBloco(self.leituraLab) )
 
         # print(self.labirinto)
         
         if ( self.leituraLab and not self.finalizado ):
+
+            if (not self.pilha_caminho):
+                # Tentativa de mitigar atrasos no pensamento
+                self.ask()
+
             if tempo_atual - self.ultimo_move_time > self.delayMove:
 
-                x, y = self.leituraLab.get("bloco")
+                self.anterior = self.atual
+                self.atual = pos_vinda_lab
+                x, y = self.ctrl.get("localizacao")
 
                 if (self.pilha_caminho):
-                    destino = self.pilha_caminho.pop()
+                    destino = self.pilha_caminho[-1] # Lendo último valor da pilha para não precisar colocar novamente
 
                     if ((x, y) != destino):
-                        self.movimentacao_segura(x, y, destino)
-                        self.pilha_caminho.append(destino)
+
+                        if self.tentou_movimento and not self.mudando():
+                            # Aqui! Indica que o agente encontrou parede
+                            # Verificar como proceder
+                            # Talvez salvar o tamanho do labirinto aqui para o agente saber
+                            self.cont_bloqueio += 1
+                            if self.cont_bloqueio >= 2:
+                                # print(f"BLOQUEIO REAL: Removendo destino {destino} após 2 tentativas.")
+                                self.pilha_caminho.pop()
+                                self.cont_bloqueio = 0
+                                self.tentou_movimento = False
+                            else:
+                                # Tenta novamente (pode ser o segundo passo após virar)
+                                self.movimentacao_segura(x, y, destino)
+                        else:
+                            # Se moveu ou é o primeiro passo, reseta contador e move
+                            self.cont_bloqueio = 0
+                            self.movimentacao_segura(x, y, destino)
+                            self.tentou_movimento = True  # Define como verdadeiro para indicar que foi tentado novo movimento
+
+                    else:
+                        self.cont_bloqueio = 0
+                        self.pilha_caminho.pop()
+                        self.tentou_movimento = False
+
                 else:
                     # pensar para atribuir valores a pilha_caminho
                     # chamada da função ask aqui:
                     # self.ask()
-                    pass
+                    print(self.pilha_caminho)
+                    
 
                 self.ultimo_move_time = tempo_atual
+            
+            print("Leitura: ", self.leituraLab)
+
+    def mudando(self):
+        print(f"Atual: {self.atual} | Anterior: {self.anterior}")
+        return self.atual != self.anterior
 
     """
     Método ask, deve retornar a posição destino ou a sequencia de 'key' que leva ao destino
     mudar nome para "pensoLogoExisto" ao final
     """
     def ask(self):
-        pass
+
+        if ( self.ctrl["localizacao"] == (0, 0) ):
+            
+            self.pilha_caminho.append( (1, 2) )
+            # self.pilha_caminho.append( (1, 1) )
+
+        if (True):
+            pass
+
     
     def iniciar(self):
         # Disposição inicial segura
@@ -79,6 +135,10 @@ class Agente:
         # self.tell( BlocoI((2, 2), [], False, "", False, False, False, "O") )
         
     def tell(self, blocoPercebido): # Talvez uma variavel t para controle do tempo
+
+        pos = self.leituraLab.get('bloco')
+        if pos:
+            self.ctrl["localizacao"] = pos
 
         x, y = blocoPercebido.posicao
 
@@ -108,28 +168,45 @@ class Agente:
             self.labirinto[x][y] = blocoPercebido
 
     def movimentacao_segura(self, x, y, bloco_alvo):
+        target_x, target_y = bloco_alvo
         direcoes = [
             (x + 1, y, pygame.K_DOWN), (x - 1, y, pygame.K_UP),  
             (x, y + 1, pygame.K_RIGHT), (x, y - 1, pygame.K_LEFT)
         ]
 
+        acao = None
+
         for vx, vy, direcao in direcoes:
-            if 0 <= vx < bloco_alvo[0]:
-                self.movimentar(pygame.K_DOWN)
+            if 0 <= vx < bloco_alvo[0] and vy > 0:
+                acao = pygame.K_DOWN
                 
-            if bloco_alvo[0] < vx:
-                self.movimentar(pygame.K_UP)
+            if bloco_alvo[0] < vx and x != bloco_alvo[0]:
+                acao = pygame.K_UP
 
-            if 0 <= vy < bloco_alvo[1]:
-                self.movimentar(pygame.K_RIGHT)
+            if 0 <= vy < bloco_alvo[1] and vx > 0:
+                acao = pygame.K_RIGHT
 
-            if bloco_alvo[1] < vy:
-                self.movimentar(pygame.K_LEFT)
+            if bloco_alvo[1] < vy and y != bloco_alvo[1]:
+                acao = pygame.K_LEFT
 
-                # if( not self.foi_visitado(vx, vy) ):
-                    # self.pilha_caminho.append((x, y))
+        #         # if( not self.foi_visitado(vx, vy) ):
+        #             # self.pilha_caminho.append((x, y))
+
+        if acao:
+            self.movimentar(acao)
+
 
     def movimentar(self, tecla):
+
+        if (tecla == pygame.K_DOWN):
+            self.ctrl["direcao"] == "frente"
+        elif (tecla == pygame.K_UP):
+            self.ctrl["direcao"] == "costa"
+        elif (tecla == pygame.K_RIGHT):
+            self.ctrl["direcao"] == "direita"
+        if (tecla == pygame.K_LEFT):
+            self.ctrl["direcao"] == "esquerda"
+
         evento = pygame.event.Event(pygame.KEYDOWN, {
             'key': tecla,
             'mod': 0,
@@ -145,7 +222,7 @@ class Agente:
                 pass
 
     def aux_convertDictBloco(self, dict):
-        return BlocoI((dict.get('bloco', [-1, -1])), 
+        return BlocoI((dict.get('bloco', [0, 0])), 
                       dict.get('atributos', []),
                       dict.get('hasPit'),
                       dict.get('hasWumpus'),
@@ -171,7 +248,7 @@ class BlocoI:
         self.perigo = ava # Use: "O" - Seguro | "?" - Dúvida | "X" - Perigosissimo | "P" - Parede
 
     def __str__(self):
-        return f"{self.posicao}.{self.perigo}"
+        return f"{self.posicao}.{self.perigo}\n         Atributos: {self.atributos}"
     
     __repr__ = __str__
     
