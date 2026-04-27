@@ -73,7 +73,7 @@ class Index:
                             is_on = True
 
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        self.main = Main(self.tamanho_lab)
+                        self.main = Main(self.dificuldade, self.tamanho_lab)
                         self.main.executar(0, 0, is_on)
                         self.screen = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA2))
                         pygame.display.set_caption("World of Wumpus")
@@ -203,7 +203,6 @@ class Index:
                 # TEXT_PREDEFINICAO = self.get_font(14).render("Predefinido? Dificuldade: ", True, PRINCIPAL_COLOR)
                 # pygame.draw.rect(self.screen, PRINCIPAL_COLOR, caixa_rect, 2)
                 # self.desenhar_menu(menu_aberto, menu_rect, opcoes, dificuldade, PRINCIPAL_COLOR)
-                # print("Vezinho")
             else:
                 # Serve de auxlio para alterar cor das informação das quantidades
                 print("Nada")

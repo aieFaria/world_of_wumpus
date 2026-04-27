@@ -8,17 +8,17 @@ from labirinto import Labirinto
 from agente import Agente
 
 class Main:
-    def __init__(self, tamanho_lab=TAMANHO_LAB):
+    def __init__(self, dificuldade, tamanho_lab=TAMANHO_LAB):
         pygame.init()
         self.tamanho_lab = tamanho_lab
-        
+        self.dificuldade = dificuldade
         # Janela de tamanho fixo
         self.tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
         self.tela.fill(PRINCIPAL_COLOR)
         pygame.display.set_caption("World of Wumpus")
         self.clock = pygame.time.Clock()
         
-        self.labirinto = Labirinto(self.tamanho_lab) # TAMANHO_LAB = 6 PADRÃO
+        self.labirinto = Labirinto(self.dificuldade, self.tamanho_lab) # TAMANHO_LAB = 6 PADRÃO
         self.agente = Agente(1)
         #pygame.font.Font(os.path.join(self.directory_path, "resources", "font", "font.ttf"), size)
         self.fonte = pygame.font.Font(os.path.join(DIR_PATH, "font", "font.ttf"), 20)

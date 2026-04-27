@@ -6,7 +6,7 @@ from bloco import Bloco
 
 class Labirinto:
 
-    def __init__(self, tamanho_lab=None):
+    def __init__(self, dificuldade, tamanho_lab=None):
         self.tamanho_lab = tamanho_lab # or TAMANHO_LAB # cons.TAMANHO_LAB
         self.board = np.zeros((tamanho_lab, tamanho_lab))
         self.cores = [pygame.Color(RECT_COLOR), pygame.Color("gray")]
@@ -20,11 +20,22 @@ class Labirinto:
         self.qtd_flechas = 0 
         self.olhandoWumpus = [] # array de tupla que contém as possibilidades de olhar para wumpus
         # Definição das quantidades de cada coisa no mapa: Configuração padrão Labirinto 6x6
-        self.dic_quantidades = {"morcegos": 2, "ouro": 3, "wumpus": 2, "flecha": 2, "buracos": 4 }
+        
+        if dificuldade == "Fácil":
+            self.dic_quantidades = self.calcular_quantidades(dificuldade)
+            print("A ", self.dic_quantidades)
+        elif dificuldade == "Médio":
+            self.dic_quantidades = self.calcular_quantidades(dificuldade)
+            print("B ", self.dic_quantidades)
+        else:  # "Difícil"
+            self.dic_quantidades = self.calcular_quantidades(dificuldade)
+            print("C ", self.dic_quantidades)
+        
+        print("Dificuldade", dificuldade)
         # self.dic_quantidades = {"morcegos": 0, "ouro": 3, "wumpus": 0, "flecha": 0, "buracos": 0 }
         self.morcegos = {"espera": False, "tempo": 0, "posicao": (0, 0)}
         self.jogador_status = 0 # Estados possiveis do jogador: 0 - vivo, 1 - perdeu, 2 - ganhou
-        
+
         # Carregamento único das imagens, economizando CPU e processamento
         self.imagens_player = {
             "frente": pygame.image.load(os.path.join(DIR_PATH, "player", "railsao_frente.png")).convert_alpha(),
@@ -39,12 +50,22 @@ class Labirinto:
             "morcegos": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "flapping.mp3")),
             "wumpus": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "diabeisso.mp3")),
             "pit": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "ahhhhhhh.mp3")),
-            "win": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "vitoria.mp3"))
+            "win": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "vitoria.mp3")),
+            "saiu": pygame.mixer.Sound(os.path.join(DIR_PATH, "sounds", "saiu.mp3"))
         }
 
         # Geração do labirinto ao iniciar, serve para acessar os blocos apenas quando for necessário
         # gera apenas uma vez
         self.gerar_labirinto()
+
+    def calcular_quantidades(self, dificuldade):
+        mult = DIFICULDADE_MULT[dificuldade]
+        escala = self.tamanho_lab / 6
+        return {
+            k: max(1, int(v * escala * mult))
+            for k, v in BASE.items()
+        }
+
 
     # Adicionando novo parametro "direcao" para indicar para qual lado personagem está olhando
     # Modificação: player_xy -> player_x, player_y
@@ -118,9 +139,13 @@ class Labirinto:
                                 print("Wumpus morto ou não existe")
 
                     # Condicional para verificar se deseja sair do Labirinto
-                    if( (0, 0) == (player_x, player_y) and acao):
+                    if( (0, 0) == (player_x, player_y) and acao): # and (self.contador_ouros == self.dic_quantidades.get("ouro"))
                         # Inserir lógica de fim de jogo (endgame)
-                        self.sons_lab["win"].play()
+                        if (self.pontuacao >= 3000):
+                            self.sons_lab["win"].play()
+                        else: 
+                            self.sons_lab["saiu"].play()
+                        
                         self.jogador_status = 2
                         print("saiu do labirinto")
 
@@ -236,8 +261,6 @@ class Labirinto:
         return dic
         # """
                     
-    # Modificar a função "def gerar_labirinto(self, tamanho_labirinto)". "tamanho_labirinto" será um par ordernado (linha, coluna)
-    # Tamanho padrão, aumentando a cada vitória ou definido pelo usuário.
     def gerar_labirinto(self):
 
         # Resetar tudo aqui dentro:
@@ -250,9 +273,6 @@ class Labirinto:
 
         for linha in range(self.tamanho_lab):
             for coluna in range(self.tamanho_lab):
-                # ParÂmetros de Bloco: 
-                # 1 -> posicao_X  | 2 -> posicao_Y  | 3 -> visivel?
-                # 4 -> tem buraco?  | 5 -> tem wumpus?  | 6 -> tem morcegos?  | 7 -> tem flecha?  | 8 -> tem ouro?
                 if ( [linha, coluna] == [0, 1] ) or ( [linha, coluna] == [1, 0] ) or ( [linha, coluna] == [0, 0] ):
                     
                     self.blocos[linha][coluna] = Bloco(linha, coluna, True, False, "", False, False, False)
@@ -261,13 +281,7 @@ class Labirinto:
                 else:
                     self.blocos[linha][coluna] = Bloco(linha, coluna, False, False, "", False, False, False)
 
-        #  Tornar qtd de morcegos maior que 1, a depender do tamanho do labirinto.
         # limite_buracos = (self.blocos.__len__() * self.blocos.__len__()) // 10
-        # limite_wumpus = limite_buracos + 1
-        # limite_morcegos = limite_wumpus + 1
-        # limite_arrow = limite_morcegos + 1
-        # limite_gold = limite_arrow + 1
-
 
         limite_buracos = self.dic_quantidades["buracos"]
         limite_wumpus = limite_buracos + self.dic_quantidades["wumpus"]

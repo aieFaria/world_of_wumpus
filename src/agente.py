@@ -39,7 +39,7 @@ class Agente:
             self.iniciar()
 
         pos_vinda_lab = self.leituraLab.get("bloco")
-
+        print("leitura ", self.leituraLab)
         if (self.atual is None):
             self.atual = pos_vinda_lab
             self.anterior = pos_vinda_lab
@@ -47,10 +47,6 @@ class Agente:
         self.tell( self.aux_convertDictBloco(self.leituraLab) )
 
         if ( self.leituraLab and not self.finalizado ):
-
-            # if (not self.pilha_caminho):
-            #     # Tentativa de mitigar atrasos no pensamento
-            #     self.ask()
 
             if tempo_atual - self.ultimo_move_time > self.delayMove:
 
@@ -122,9 +118,6 @@ class Agente:
     ao bloco atual.
     """
     def ask(self, x, y):
-        # Se o bloco atual não contém nenhum atributo, ele é seguro.
-
-        print("Atributo atual: ", self.leituraLab.get("atributos"))
         if not self.leituraLab.get("atributos"):
             # Movimentos possíveis em cruz
             candidatos = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
@@ -140,24 +133,7 @@ class Agente:
                     self.pilha_caminho.append((nx, ny))
         else:
             self.perigosos.add((x, y))
-        
-        # print("pilha: ", self.pilha_caminho)
-        # for item in reversed(self.pilha_caminho):
-        #     if item[0] < 0 or item[1] < 0:
-        #         self.pilha_caminho.remove(item)
-        #     if item in (self.visitados):
-        #         self.pilha_caminho.remove(item)
-            # Isaac, aquela tua verificação segue abaixo
-            # Precisa alterar a chamada dessa função para iterar sobre os elementos 
-            # descobertos a variavel "self.labirinto"
-            # Ou então mesclar a lógica dela com o atual. 
-            # Notas para relembrar:
-            # 1) Criar método para retornar blocos adjacentes a (x, y), vai facilitar algumas operações;
-            # 2) Criar modo de fugir os blocos marcados como perigosos, sua criação não depende do método ask
-            #    visto que pode ser uma coisa feita em paralelo e não irá interfetir em nada;
-            # pass
 
-    
     def iniciar(self):
         # Disposição inicial segura
         bloco = BlocoI((0, 0), [], False, "", False, False, False, "O")
@@ -167,13 +143,6 @@ class Agente:
         self.tell(bloco)
         self.tell(bloco1)
         self.tell(bloco2)
-
-        # Testes da função tell
-        # self.tell( BlocoI((2, 0), [], False, "", False, False, False, "O") )
-        # self.tell( BlocoI((5, 5), [], False, "", False, False, False, "O") ) # Teleport linha e coluna diferente
-        # # self.tell( BlocoI((0, 5), [], False, "", False, False, False, "O") ) # Teleport mesma coluna
-        # # self.tell( BlocoI((5, 0), [], False, "", False, False, False, "O") ) # Teleport mesma linha
-        # self.tell( BlocoI((2, 2), [], False, "", False, False, False, "O") )
         
     def tell(self, blocoPercebido): # Talvez uma variavel t para controle do tempo
 
@@ -202,7 +171,6 @@ class Agente:
                     else:
                         blocoAdicional = BlocoI((i, j), [], False, "", False, False, False)
                         if (not blocoAdicional in self.labirinto): self.labirinto[i].append( blocoAdicional )
-            
 
         else:
             # Substitui o bloco caso já exista
