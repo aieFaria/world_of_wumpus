@@ -48,15 +48,18 @@ class Agente:
 
         if ( self.leituraLab and not self.finalizado ):
 
-            if (not self.pilha_caminho):
-                # Tentativa de mitigar atrasos no pensamento
-                self.ask()
+            # if (not self.pilha_caminho):
+            #     # Tentativa de mitigar atrasos no pensamento
+            #     self.ask()
 
             if tempo_atual - self.ultimo_move_time > self.delayMove:
 
                 self.anterior = self.atual
                 self.atual = pos_vinda_lab
                 x, y = self.ctrl.get("localizacao")
+
+                if (self.mudando):
+                    self.ask(x, y)
 
                 print("PILHA CAMINHO: ", self.pilha_caminho)
                 if (self.pilha_caminho):
@@ -76,7 +79,7 @@ class Agente:
                                 self.tentou_movimento = False
                             else:
                                 self.movimentacao_segura(x, y, destino)
-                                # self.visitados.add((x, y))
+                                self.visitados.add((x, y))
 
                         else:
                             # Se moveu ou é o primeiro passo, reseta contador e move
@@ -118,30 +121,32 @@ class Agente:
     A condicional que verifica se o bloco tem atributos, serve para calcular os blocos seguros adjacentes
     ao bloco atual.
     """
-    def ask(self):
+    def ask(self, x, y):
         # Se o bloco atual não contém nenhum atributo, ele é seguro.
-        x, y = self.leituraLab.get("bloco")
 
-        if (not self.leituraLab.get("atributos")):
-            # Falta colocar uma limitação de valor para x e y de acordo com tamanho_lab
-            if (x >= 0) and (y >= 0):
-                # Cima
-                self.pilha_caminho.append((x - 1, y))
-                # Baixo
-                self.pilha_caminho.append((x + 1, y))
-                # esquerda
-                self.pilha_caminho.append((x, y - 1))
-                # direita
-                self.pilha_caminho.append((x, y + 1))
+        print("Atributo atual: ", self.leituraLab.get("atributos"))
+        if not self.leituraLab.get("atributos"):
+            # Movimentos possíveis em cruz
+            candidatos = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
+
+            for nx, ny in candidatos:
+                if nx < 0 or ny < 0:
+                    continue
+                # 2. Se o agente já descobriu o limite máximo, respeita ele
+                if self.tamanho_lab and (nx >= self.tamanho_lab or ny >= self.tamanho_lab):
+                    continue
+                # 3. Verifica se o bloco será explorado (não visitado, não perigoso e não duplicado)
+                if (nx, ny) not in self.visitados and (nx, ny) not in self.perigosos and (nx, ny) not in self.pilha_caminho:
+                    self.pilha_caminho.append((nx, ny))
         else:
             self.perigosos.add((x, y))
         
-        print("pilha: ", self.pilha_caminho)
-        for item in reversed(self.pilha_caminho):
-            if item[0] < 0 or item[1] < 0:
-                self.pilha_caminho.remove(item)
-            if item in (self.visitados):
-                self.pilha_caminho.remove(item)
+        # print("pilha: ", self.pilha_caminho)
+        # for item in reversed(self.pilha_caminho):
+        #     if item[0] < 0 or item[1] < 0:
+        #         self.pilha_caminho.remove(item)
+        #     if item in (self.visitados):
+        #         self.pilha_caminho.remove(item)
             # Isaac, aquela tua verificação segue abaixo
             # Precisa alterar a chamada dessa função para iterar sobre os elementos 
             # descobertos a variavel "self.labirinto"
@@ -205,28 +210,17 @@ class Agente:
 
     def movimentacao_segura(self, x, y, bloco_alvo):
         target_x, target_y = bloco_alvo
-        direcoes = [
-            (x + 1, y), (x - 1, y),  
-            (x, y + 1), (x, y - 1)
-        ]
-
         acao = None
 
-        for vx, vy in direcoes:
-            if 0 <= vx < target_x and vy > 0:
-                acao = pygame.K_DOWN
-                
-            if target_x < vx and x != target_x:
-                acao = pygame.K_UP
-
-            if 0 <= vy < target_y and vx > 0:
-                acao = pygame.K_RIGHT
-
-            if target_y < vy and y != target_y:
-                acao = pygame.K_LEFT
-
-        #         # if( not self.foi_visitado(vx, vy) ):
-        #             # self.pilha_caminho.append((x, y))
+        # Move towards target: Y-axis first (safer exploration), then X-axis
+        if y > target_y:
+            acao = pygame.K_LEFT   # Esquerda
+        elif y < target_y:
+            acao = pygame.K_RIGHT  # Direita
+        elif x < target_x:
+            acao = pygame.K_DOWN   # Baixo
+        elif x > target_x:
+            acao = pygame.K_UP     # Cima
 
         if acao:
             self.movimentar(acao)
