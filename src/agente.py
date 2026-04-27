@@ -20,6 +20,7 @@ class Agente:
         self.anterior = None
         self.tentou_movimento = False
         self.cont_bloqueio = 0
+        self.tamanho_lab = None
 
         self.historico = [] # Inicializa vazio
 
@@ -68,14 +69,14 @@ class Agente:
                             # Verificar como proceder
                             # Talvez salvar o tamanho do labirinto aqui para o agente saber
                             self.cont_bloqueio += 1
-                            if self.cont_bloqueio >= 2:
-                                # print(f"BLOQUEIO REAL: Removendo destino {destino} após 2 tentativas.")
+                            if self.cont_bloqueio >= 3:
+                                self.tamanho_lab = max(x, y) + 1
                                 self.pilha_caminho.pop()
                                 self.cont_bloqueio = 0
                                 self.tentou_movimento = False
                             else:
-                                # Tenta novamente (pode ser o segundo passo após virar)
                                 self.movimentacao_segura(x, y, destino)
+
                         else:
                             # Se moveu ou é o primeiro passo, reseta contador e move
                             self.cont_bloqueio = 0
@@ -96,7 +97,7 @@ class Agente:
 
                 self.ultimo_move_time = tempo_atual
             
-            print("Leitura: ", self.leituraLab)
+            print("Leitura: ", self.labirinto, "   len: ", self.tamanho_lab)
 
     def mudando(self):
         print(f"Atual: {self.atual} | Anterior: {self.anterior}")
@@ -108,12 +109,48 @@ class Agente:
     """
     def ask(self):
 
+        # Caso seja o movimento inicial ande nas casas (1, 0) e (0, 1)
         if ( self.ctrl["localizacao"] == (0, 0) ):
-            
-            self.pilha_caminho.append( (1, 2) )
-            # self.pilha_caminho.append( (1, 1) )
+            self.pilha_caminho.append( (1, 0) )
+            self.pilha_caminho.append( (0, 1) )
 
-        if (True):
+        # Caso não seja movimento inicial faça iteração sobre os elementos de self.labirinto
+        # para inferir qual movimento escolher
+        else:
+            # Isaac, aquela tua verificação segue abaixo
+            # Precisa alterar a chamada dessa função para iterar sobre os elementos 
+            # descobertos a variavel "self.labirinto"
+            # Ou então mesclar a lógica dela com o atual. 
+            """
+            def ask(self, x, y, atributos):
+                if (not atributos):
+                    # Faltou colocar uma limitação de valor para x e y,
+                    # Pois não tem nenhuma variável que defina o tamanho do lab variável
+                    # Ponto a se atentar & verificar se ocorrerá erro
+                    if (x >= 0) and (y >= 0):
+                        # Cima
+                        self.pilha_caminho.append((x - 1, y))
+                        # Baixo
+                        self.pilha_caminho.append((x + 1, y))
+                        # esquerda
+                        self.pilha_caminho.append((x, y - 1))
+                        # direita
+                        self.pilha_caminho.append((x, y + 1))
+                else:
+                    self.perigosos.add((x, y))
+
+                print("pilha:> ", self.pilha_caminho)
+                for item in reversed(self.pilha_caminho):
+                    if item[0] < 0 or item[1] < 0:
+                        self.pilha_caminho.remove(item)
+                    if item in (self.visitados):
+                        self.pilha_caminho.remove(item)
+            """
+
+            # Notas para relembrar:
+            # 1) Criar método para retornar blocos adjacentes a (x, y), vai facilitar algumas operações;
+            # 2) Criar modo de fugir os blocos marcados como perigosos, sua criação não depende do método ask
+            #    visto que pode ser uma coisa feita em paralelo e não irá interfetir em nada;
             pass
 
     
@@ -248,7 +285,7 @@ class BlocoI:
         self.perigo = ava # Use: "O" - Seguro | "?" - Dúvida | "X" - Perigosissimo | "P" - Parede
 
     def __str__(self):
-        return f"{self.posicao}.{self.perigo}\n         Atributos: {self.atributos}"
+        return f"\n{self.posicao}.{self.perigo}\n         Atributos: {self.atributos}"
     
     __repr__ = __str__
     

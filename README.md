@@ -55,6 +55,12 @@ Como exportar usando pygbag
 - [✔️] Criar Slider para mudança do tamanho de labirinto na tela de opcoes
 - [❌] Incrementar dificuldade, caso o jogador tenha GANHADO o jogo.
 - [✔️] Colocar efeitos sonoros de morte. Modificar para mostrar morte antes da chamada da tela final
+- [❌] Programar Agente Lógico.
+
+-> Notas para relembrar:
+
+     1) Criar método para retornar blocos adjacentes a (x, y), vai facilitar algumas operações;
+     2) Criar modo de fugir os blocos marcados como perigosos, sua criação não depende do método ask visto que pode ser uma coisa feita em paralelo e não irá interfetir em nada;
        
 
 ✔️ - Feito
