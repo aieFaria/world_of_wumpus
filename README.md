@@ -10,7 +10,7 @@ Ativar ambiente virtual python
 Entrar no ambiente vistual
 > .\\.venv\Scripts\activate (Windowns)
 
-> source venv/bin/activate (Linux)
+> source .venv/bin/activate (Linux)
 
 ## 🔗 Dependencias do projeto
 
