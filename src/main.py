@@ -5,7 +5,7 @@ import os, pygame
 from button import Button
 from cons import *
 from labirinto import Labirinto
-from agente import Agente
+from agente2 import Agente
 
 class Main:
     def __init__(self, dificuldade, tamanho_lab=TAMANHO_LAB):

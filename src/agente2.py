@@ -98,10 +98,9 @@ class Agente:
             
             elif self.tentou_movimento:
                 self.cont_bloqueio += 1
-                if self.cont_bloqueio >= 2:
+                if self.cont_bloqueio >= 3:
                     if self.pilha_caminho:
                         destino_bloqueado = self.pilha_caminho[-1]
-                        print(f"PAREDE CONFIRMADA EM: {destino_bloqueado}")
                         
                         bx, by = destino_bloqueado
                         if bx < len(self.labirinto) and by < len(self.labirinto[bx]):
@@ -126,6 +125,7 @@ class Agente:
                     self.ask()
 
             # LÓGICA DE COMBATE: Prioridade se soubermos onde o Wumpus está e tivermos flechas
+            # (IMPORTANTE) Lógica completamente quebrada, precisa modificar
             qtd_flechas = self.leituraLab.get("qtd_flechas", 0)
             if self.wumpus_confirmado and qtd_flechas > 0 and not self.wumpus_morto:
                 self.atacar_wumpus(x, y)
@@ -148,6 +148,7 @@ class Agente:
 
             self.ultimo_move_time = tempo_atual
 
+    # (IMPORTANTE) Não funciona corretamente, mas possivelmente a lógica pode ser aproveitada
     def atacar_wumpus(self, x, y):
         wx, wy = self.wumpus_confirmado
         
@@ -208,6 +209,7 @@ class Agente:
                 vistos_na_pilha.add(coord)
         self.pilha_caminho = nova_pilha
 
+    # (IMPORTANTE) Não funciona corretamente
     def inferir_wumpus(self):
         if self.wumpus_confirmado or not self.pistas_fedor:
             return
@@ -228,6 +230,8 @@ class Agente:
             print(f"WUMPUS LOCALIZADO EM: {self.wumpus_confirmado}")
             self.perigosos.add(self.wumpus_confirmado)
 
+    # (IMPORTANTE) Está funcionando como esperado mas necessita de atenção
+    #              pois o código esta ilegível
     def ask(self):
         x, y = self.ctrl.get("localizacao")
         atributos = self.leituraLab.get("atributos", [])
@@ -259,6 +263,7 @@ class Agente:
         for destino in novos_destinos:
             self.pilha_caminho.append(destino)
 
+    # (IMPORTANTE) Segue o mesmo problema da ask, está ilegivel
     def classificar_mapa(self):
 
         seguros = set([(0, 0)])
@@ -345,9 +350,21 @@ class Agente:
 
 
     def movimentar(self, tecla):
-        direcoes = {pygame.K_DOWN: "frente", pygame.K_UP: "costa", pygame.K_RIGHT: "direita", pygame.K_LEFT: "esquerda"}
+        direcoes = {
+            pygame.K_DOWN: "frente", 
+            pygame.K_UP: "costa", 
+            pygame.K_RIGHT: "direita", 
+            pygame.K_LEFT: "esquerda"
+        }
+
         self.ctrl["direcao"] = direcoes.get(tecla, self.ctrl["direcao"])
-        evento = pygame.event.Event(pygame.KEYDOWN, {'key': tecla, 'mod': 0, 'is_agent': True})
+
+        evento = pygame.event.Event(pygame.KEYDOWN, {
+            'key': tecla, 
+            'mod': 0, 
+            'is_agent': True
+            })
+
         pygame.event.post(evento)
         self.tentou_movimento = True
 
@@ -367,6 +384,7 @@ class Agente:
         x, y = bloco.posicao
         
         # Contabilizar novos elementos encontrados
+        # (IMPORTANTE) Corrigir essa contagem de elementos
         if (x, y) not in self.visitados:
             if bloco.hasGold: self.quantidades_encontradas["ouro"] += 1
             if bloco.hasBats: self.quantidades_encontradas["morcegos"] += 1
