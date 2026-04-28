@@ -55,7 +55,8 @@ Como exportar usando pygbag
 - [✔️] Criar Slider para mudança do tamanho de labirinto na tela de opcoes
 - [❌] Incrementar dificuldade, caso o jogador tenha GANHADO o jogo.
 - [✔️] Colocar efeitos sonoros de morte. Modificar para mostrar morte antes da chamada da tela final
-- [❌] Programar Agente Lógico.
+- [❌] Programar Agente Lógico Versão 2. Arquivo `agente2.py`.
+        -> Estão marcados com a flag "(IMPORTANTE)" pontos do código que necessitam de correção
 
 -> Notas para relembrar:
 
